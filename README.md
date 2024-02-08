@@ -24,3 +24,4 @@
 		- qiime has a merging function, Dr. Evelyn will send us a tutorial for it
 	- if we find that the model is bad we need to reach out to the researchers just to let them know that we're going to be "criticizing" their paper
 - record everything we do to clean up the metadata
+- get a head start on the metadata
