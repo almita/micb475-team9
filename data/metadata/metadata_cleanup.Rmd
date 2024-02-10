@@ -1,0 +1,46 @@
+---
+title: "metadata_cleanup"
+author: "Alma Garcia"
+date: "2024-02-10"
+output: html_document
+---
+# Metadata Cleanup
+
+## file import
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+
+```{r}
+human_metadata_raw <- read_xlsx("starch_metadata.xlsx")
+mouse_metadata_raw <- read.delim("mouse_starch_metadata.tsv")
+```
+
+## filtering
+
+```{r}
+human_metadata <- human_metadata_raw %>% 
+									filter(timepoint == 2) %>%
+									select("#SampleID",host_subject_id, timepoint, trt) %>%
+									rename(sample_id = "#SampleID")
+```
+
+```{r}
+mouse_metadata <- mouse_metadata_raw %>% 
+									filter(Treatment != "INU") %>%
+									mutate(trt = ifelse(Treatment == "CTL", "C", "RS")) %>%
+									rename(sample_id = sample.id)
+```
+
+## export
+
+```{r}
+write_delim(human_metadata, "human_metadata.tsv", delim = "\t")
+write_delim(mouse_metadata, "mouse_metadata.tsv", delim = "\t")
+
+```
+
+
