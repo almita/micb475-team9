@@ -13,7 +13,6 @@ library(tidyverse)
 library(readxl)
 ```
 
-
 ```{r}
 human_metadata_raw <- read_xlsx("starch_metadata.xlsx")
 mouse_metadata_raw <- read.delim("mouse_starch_metadata.tsv")
@@ -21,6 +20,7 @@ mouse_metadata_raw <- read.delim("mouse_starch_metadata.tsv")
 
 ## filtering
 
+We will keep only the data from timepoint 2 which corresponds to the first treatment phase. 
 ```{r}
 human_metadata <- human_metadata_raw %>% 
 									filter(timepoint == 2) %>%
@@ -28,6 +28,7 @@ human_metadata <- human_metadata_raw %>%
 									rename(sample_id = "#SampleID")
 ```
 
+We will remove the positive control INU samples because they're not a resistant starch treatment and can't be compared between the datasets. 
 ```{r}
 mouse_metadata <- mouse_metadata_raw %>% 
 									filter(Treatment != "INU") %>%
@@ -42,5 +43,3 @@ write_delim(human_metadata, "human_metadata.tsv", delim = "\t")
 write_delim(mouse_metadata, "mouse_metadata.tsv", delim = "\t")
 
 ```
-
-
