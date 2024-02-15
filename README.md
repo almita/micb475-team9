@@ -26,3 +26,10 @@
 - record everything we do to clean up the metadata
 - get a head start on the metadata
 - research on strains of the bacteria we found and the relation with human health
+
+
+### Meeting 3 - 15/FEB/2024
+#### agenda
+- metadata cleanup files
+- proposal aims
+
