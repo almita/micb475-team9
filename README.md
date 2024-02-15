@@ -32,4 +32,5 @@
 #### agenda
 - metadata cleanup files
 - proposal aims
+- divide the work
 
