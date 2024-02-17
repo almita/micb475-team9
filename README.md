@@ -26,3 +26,29 @@
 - record everything we do to clean up the metadata
 - get a head start on the metadata
 - research on strains of the bacteria we found and the relation with human health
+
+
+### Meeting 3 - 15/FEB/2024
+#### agenda
+- metadata cleanup files
+- proposal aims
+- divide the work
+
+#### notes
+- take out mnt files from server for both datasets reconsile with metadata (only same datafiles stay)
+- use new manifest file when running the qiime in parallel
+- merge meta datafiles
+- proposal aims:
+- 	aim 1 - data wrangling
+-	aim 2 - qiime2 processing, done in parallel on two datasets - check what kind of data is used in mouse and human dataset, create a detached screen when running in parallel
+- 	aim 3 - alpha beta diversity metrics to compare cohorts (qiime and R) - PCA plot to see if points are clustered together
+- 	aim 4 - core microbiome to compare
+- 	aim 5 - differential abundance
+- sample sizes:
+- 	human dataset - 31
+- 	mouse dataset - 78 (15 of them are non-resistant starch, 63 are resistant starch)
+- 	add new column for both called cohort
+- 	when merging, create new column on metadata that combines organism and starch resistance (human-starch, human-no starch, mouse-starch, mouse-no starch)
+- send email of quality plot or demux(qzv files) before trimming data, also send alpha-rarefaction data, combine datasets after denoising steps
+- have alpha and beta diversity metrics ready after reading week
+- for agendas, include summary of progress along with what we want to discuss
