@@ -52,3 +52,9 @@
 - send email of quality plot or demux(qzv files) before trimming data, also send alpha-rarefaction data, combine datasets after denoising steps
 - have alpha and beta diversity metrics ready after reading week
 - for agendas, include summary of progress along with what we want to discuss
+
+
+### Meeting 4 - 22/FEB/2024
+#### Agenda
+- ask about paired-end reads for mouse dataset - how do we distinguish forward & reverse reads?
+- got the quality plot for human dataset, unsure if demultiplexed or not? - need a barcode if we want to demultiplex ourselves
