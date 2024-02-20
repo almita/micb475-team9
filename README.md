@@ -58,3 +58,4 @@
 #### Agenda
 - ask about paired-end reads for mouse dataset - how do we distinguish forward & reverse reads?
 - got the quality plot for human dataset, unsure if demultiplexed or not? - need a barcode if we want to demultiplex ourselves
+- review team proposal
