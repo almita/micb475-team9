@@ -124,8 +124,8 @@ Feature tables
 
 ```bash
 qiime feature-table merge \
- --i-tables table1.qza \
- --i-tables table2.qza \
+ --i-tables table_human.qza \
+ --i-tables table_mouse.qza \
  --o-merged-table merged_table.qza
 ```
 
@@ -133,8 +133,8 @@ Representative sequences
 
 ```bash
 qiime feature-table merge-seqs \
- --i-data may_rep-seqs.qza \
- --i-data july_rep-seqs.qza \
+ --i-data rep-seqs_human.qza \
+ --i-data rep-seqs_mouse.qza \
  --o-merged-data merged_rep-seqs.qza
 ```
 
