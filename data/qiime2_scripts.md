@@ -44,12 +44,12 @@ qiime demux summarize \
 
 ```bash
 qiime dada2 denoise-single \
---i-demultiplexed-seqs demux.qza \
+--i-demultiplexed-seqs /home/qiime2/data/output/demux_human.qza \
 --p-trim-left 0 \
---p-trunc-len 150 \
---o-representative-sequences rep-seqs.qza \
---o-table table.qza \
---o-denoising-stats stats.qza
+--p-trunc-len 260 \
+--o-representative-sequences rep-seqs_human.qza \
+--o-table table_human.qza \
+--o-denoising-stats stats_human.qza
 ```
 
 #### denoising visualizations
