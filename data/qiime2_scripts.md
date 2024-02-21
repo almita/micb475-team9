@@ -138,6 +138,20 @@ qiime feature-table merge-seqs \
  --o-merged-data merged_rep-seqs.qza
 ```
 
+Visualization
+```bash
+qiime feature-table tabulate-seqs \
+  --i-data merged_rep-seqs.qza \
+  --o-visualization merged_rep-seqs.qzv
+```
+
+```bash
+qiime feature-table summarize \
+  --i-table merged_table.qza \
+  --o-visualization merged_table.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
+```
+
 ## phylogenetic tree
 
 ```bash
