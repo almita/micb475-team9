@@ -58,25 +58,25 @@ ASVs
 
 ```bash
 qiime feature-table tabulate-seqs \
-  --i-data rep-seqs.qza \
-  --o-visualization rep-seqs.qzv
+  --i-data rep-seqs_human.qza \
+  --o-visualization rep-seqs_human.qzv
 ```
 
 DADA2 stats
 
 ```bash
 qiime metadata tabulate \
-  --m-input-file stats.qza  \
-  --o-visualization stats.qzv
+  --m-input-file stats_human.qza  \
+  --o-visualization stats_human.qzv
 ```
 
 Feature table
 
 ```bash
 qiime feature-table summarize \
-  --i-table table.qza \
-  --o-visualization table.qzv \
-  --m-sample-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv
+  --i-table table_human.qza \
+  --o-visualization table_human.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
 
 ### mouse:
