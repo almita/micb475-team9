@@ -151,6 +151,33 @@ qiime feature-table summarize \
   --o-visualization merged_table.qzv \
   --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
+## taxonomic classification
+
+Taxonomic analysis
+(Use the complete SILVA classifier, not the region specific ones.)
+
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva-v4-classifier.qza \
+  --i-reads merged_rep-seqs.qza \
+  --o-classification taxonomy.qza
+```
+
+Taxonomy barplots
+```bash
+qiime taxa barplot \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file /mnt/datasets/project_1/moving_pictures/sample-metadata.tsv \
+  --o-visualization taxa-bar-plots.qzv
+```
+
+Visualization
+```bash
+qiime metadata tabulate \
+  --m-input-file taxonomy.qza \
+  --o-visualization taxonomy.qzv
+```
 
 ## phylogenetic tree
 
