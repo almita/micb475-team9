@@ -83,12 +83,12 @@ qiime feature-table summarize \
 
 ```bash
 qiime dada2 denoise-single \
---i-demultiplexed-seqs demux.qza \
+--i-demultiplexed-seqs demux_mouse.qza \
 --p-trim-left 0 \
---p-trunc-len 150 \
---o-representative-sequences rep-seqs.qza \
---o-table table.qza \
---o-denoising-stats stats.qza
+--p-trunc-len 260 \
+--o-representative-sequences rep-seqs_mouse.qza \
+--o-table table_mouse.qza \
+--o-denoising-stats stats_mouse.qza
 ```
 
 #### denoising visualizations
