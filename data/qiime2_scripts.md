@@ -2,7 +2,7 @@
 
 ## importing
 
-Human:
+### human:
 
 ```bash
 qiime tools import \
@@ -20,8 +20,7 @@ qiime demux summarize \
 --o-visualization demux_human.qzv
 ```
 
-Mouse:
-
+### mouse:
 
 ```bash
 qiime tools import \
@@ -41,6 +40,194 @@ qiime demux summarize \
 
 ## denoising
 
-Human:
+### human:
 
-Mouse:
+```bash
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs demux.qza \
+--p-trim-left 0 \
+--p-trunc-len 150 \
+--o-representative-sequences rep-seqs.qza \
+--o-table table.qza \
+--o-denoising-stats stats.qza
+```
+
+denoising visualizations:
+
+ASVs
+
+```bash
+qiime feature-table tabulate-seqs \
+  --i-data rep-seqs.qza \
+  --o-visualization rep-seqs.qzv
+```
+
+DADA2 stats
+
+```bash
+qiime metadata tabulate \
+  --m-input-file stats.qza  \
+  --o-visualization stats.qzv
+```
+
+Feature table
+
+```bash
+qiime feature-table summarize \
+  --i-table table.qza \
+  --o-visualization table.qzv \
+  --m-sample-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv
+```
+
+### mouse:
+
+```bash
+qiime dada2 denoise-single \
+--i-demultiplexed-seqs demux.qza \
+--p-trim-left 0 \
+--p-trunc-len 150 \
+--o-representative-sequences rep-seqs.qza \
+--o-table table.qza \
+--o-denoising-stats stats.qza
+```
+
+denoising visualizations:
+
+ASVs
+
+```bash
+qiime feature-table tabulate-seqs \
+  --i-data rep-seqs.qza \
+  --o-visualization rep-seqs.qzv
+```
+
+DADA2 stats
+
+```bash
+qiime metadata tabulate \
+  --m-input-file stats.qza  \
+  --o-visualization stats.qzv
+```
+
+Feature table
+
+```bash
+qiime feature-table summarize \
+  --i-table table.qza \
+  --o-visualization table.qzv \
+  --m-sample-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv
+```
+
+## phylogenetic tree
+
+### human
+
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-masked-alignment masked-aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza
+```
+
+### mouse
+
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-masked-alignment masked-aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza
+```
+
+## rarefaction
+
+### human
+
+alpha-rarefaction curves
+
+```bash
+qiime diversity alpha-rarefaction \
+  --i-table table.qza \
+  --i-phylogeny rooted-tree.qza \
+  --p-max-depth 4996 \
+  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --o-visualization alpha-rarefaction.qzv
+```
+
+### mouse
+
+alpha-rarefaction curves
+
+```bash
+qiime diversity alpha-rarefaction \
+  --i-table table.qza \
+  --i-phylogeny rooted-tree.qza \
+  --p-max-depth 4996 \
+  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --o-visualization alpha-rarefaction.qzv
+```
+
+## diversity metrics
+
+### human
+
+```bash
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table table.qza \
+  --p-sampling-depth 2020 \
+  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --output-dir core-metrics-results
+```
+
+### mouse
+
+```bash
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table table.qza \
+  --p-sampling-depth 2020 \
+  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --output-dir core-metrics-results
+```
+
+## alpha diversity analysis
+
+### human
+
+### mouse
+
+
+
+## beta diversity analysis
+
+### human
+
+### mouse
+
+
+
+## taxonomic classification
+
+Use the complete SILVA classifier, not the region specific ones.
+
+## human
+
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva-v4-classifier.qza \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy.qza
+```
+
+## mouse
+
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva-v4-classifier.qza \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy.qza
+```
