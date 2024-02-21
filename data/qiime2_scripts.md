@@ -52,7 +52,7 @@ qiime dada2 denoise-single \
 --o-denoising-stats stats.qza
 ```
 
-denoising visualizations:
+#### denoising visualizations
 
 ASVs
 
@@ -91,7 +91,7 @@ qiime dada2 denoise-single \
 --o-denoising-stats stats.qza
 ```
 
-denoising visualizations:
+#### denoising visualizations
 
 ASVs
 
@@ -118,20 +118,27 @@ qiime feature-table summarize \
   --m-sample-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv
 ```
 
-## phylogenetic tree
+## merging datasets
 
-### human
+Feature tables
 
 ```bash
-qiime phylogeny align-to-tree-mafft-fasttree \
-  --i-sequences rep-seqs.qza \
-  --o-alignment aligned-rep-seqs.qza \
-  --o-masked-alignment masked-aligned-rep-seqs.qza \
-  --o-tree unrooted-tree.qza \
-  --o-rooted-tree rooted-tree.qza
+qiime feature-table merge \
+ --i-tables table1.qza \
+ --i-tables table2.qza \
+ --o-merged-table merged_table.qza
 ```
 
-### mouse
+Representative sequences
+
+```bash
+qiime feature-table merge-seqs \
+ --i-data may_rep-seqs.qza \
+ --i-data july_rep-seqs.qza \
+ --o-merged-data merged_rep-seqs.qza
+```
+
+## phylogenetic tree
 
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
@@ -143,21 +150,6 @@ qiime phylogeny align-to-tree-mafft-fasttree \
 ```
 
 ## rarefaction
-
-### human
-
-alpha-rarefaction curves
-
-```bash
-qiime diversity alpha-rarefaction \
-  --i-table table.qza \
-  --i-phylogeny rooted-tree.qza \
-  --p-max-depth 4996 \
-  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
-  --o-visualization alpha-rarefaction.qzv
-```
-
-### mouse
 
 alpha-rarefaction curves
 
@@ -171,19 +163,7 @@ qiime diversity alpha-rarefaction \
 ```
 
 ## diversity metrics
-
-### human
-
-```bash
-qiime diversity core-metrics-phylogenetic \
-  --i-phylogeny rooted-tree.qza \
-  --i-table table.qza \
-  --p-sampling-depth 2020 \
-  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
-  --output-dir core-metrics-results
-```
-
-### mouse
+`--p-sampling-depth` is the rarefaction parameter
 
 ```bash
 qiime diversity core-metrics-phylogenetic \
@@ -196,34 +176,13 @@ qiime diversity core-metrics-phylogenetic \
 
 ## alpha diversity analysis
 
-### human
-
-### mouse
-
-
 
 ## beta diversity analysis
-
-### human
-
-### mouse
-
 
 
 ## taxonomic classification
 
 Use the complete SILVA classifier, not the region specific ones.
-
-## human
-
-```bash
-qiime feature-classifier classify-sklearn \
-  --i-classifier silva-v4-classifier.qza \
-  --i-reads rep-seqs.qza \
-  --o-classification taxonomy.qza
-```
-
-## mouse
 
 ```bash
 qiime feature-classifier classify-sklearn \
