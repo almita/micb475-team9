@@ -97,25 +97,25 @@ ASVs
 
 ```bash
 qiime feature-table tabulate-seqs \
-  --i-data rep-seqs.qza \
-  --o-visualization rep-seqs.qzv
+  --i-data rep-seqs_mouse.qza \
+  --o-visualization rep-seqs_mouse.qzv
 ```
 
 DADA2 stats
 
 ```bash
 qiime metadata tabulate \
-  --m-input-file stats.qza  \
-  --o-visualization stats.qzv
+  --m-input-file stats_mouse.qza  \
+  --o-visualization stats_mouse.qzv
 ```
 
 Feature table
 
 ```bash
 qiime feature-table summarize \
-  --i-table table.qza \
-  --o-visualization table.qzv \
-  --m-sample-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv
+  --i-table table_mouse.qza \
+  --o-visualization table_mouse.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
 
 ## merging datasets
