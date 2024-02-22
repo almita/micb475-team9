@@ -158,7 +158,7 @@ Taxonomic analysis
 
 ```bash
 qiime feature-classifier classify-sklearn \
-  --i-classifier silva-v4-classifier.qza \
+  --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
   --i-reads merged_rep-seqs.qza \
   --o-classification taxonomy.qza
 ```
@@ -166,9 +166,9 @@ qiime feature-classifier classify-sklearn \
 Taxonomy barplots
 ```bash
 qiime taxa barplot \
-  --i-table table.qza \
+  --i-table merged_table.qza \
   --i-taxonomy taxonomy.qza \
-  --m-metadata-file /mnt/datasets/project_1/moving_pictures/sample-metadata.tsv \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
   --o-visualization taxa-bar-plots.qzv
 ```
 
@@ -178,12 +178,22 @@ qiime metadata tabulate \
   --m-input-file taxonomy.qza \
   --o-visualization taxonomy.qzv
 ```
+## filter
+
+taxonomy based filtering
+```bash
+qiime taxa filter-table \
+  --i-table merged_table.qza \
+  --i-taxonomy taxonomy.qza \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table merged_table-no-mitochondria-no-chloroplast.qza
+```
 
 ## phylogenetic tree
 
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
-  --i-sequences rep-seqs.qza \
+  --i-sequences merged_rep-seqs.qza \
   --o-alignment aligned-rep-seqs.qza \
   --o-masked-alignment masked-aligned-rep-seqs.qza \
   --o-tree unrooted-tree.qza \
@@ -196,10 +206,10 @@ alpha-rarefaction curves
 
 ```bash
 qiime diversity alpha-rarefaction \
-  --i-table table.qza \
+  --i-table merged_table.qza \
   --i-phylogeny rooted-tree.qza \
   --p-max-depth 4996 \
-  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
   --o-visualization alpha-rarefaction.qzv
 ```
 
