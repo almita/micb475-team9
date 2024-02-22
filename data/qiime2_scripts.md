@@ -188,6 +188,13 @@ qiime taxa filter-table \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table merged_table-no-mitochondria-no-chloroplast.qza
 ```
+Visualization
+```bash
+qiime feature-table summarize \
+  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
+  --o-visualization merged_table-no-mitochondria-no-chloroplast.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
+```
 
 ## phylogenetic tree
 
