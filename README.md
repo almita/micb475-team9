@@ -59,3 +59,18 @@
 - ask about paired-end reads for mouse dataset - how do we distinguish forward & reverse reads?
 - got the quality plot for human dataset, unsure if demultiplexed or not? - need a barcode if we want to demultiplex ourselves
 - review team proposal
+
+#### notes
+- Initial analysis was not as expected
+- Write up proposal as is and redo meta data analysis afterwards
+- take a look at different resistant starch in the mouse dataset
+- See greater seperation if PcoA plot did not have the control
+- Do analysis with positive control to see if there is seperation
+	- include Inulin sample in mouse data set
+- Filter out more sampples to control for more variables in human like weight to get more groups
+- Potentially add or explore new data set after proposal
+- use mice data for PcoA for proposal
+- make sure all bioinformatic tools are cited Qiime2 and dada2
+- figure legends title for overall takeaway for the figure and detail explanation for each figure
+
+   
