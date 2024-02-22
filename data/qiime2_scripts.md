@@ -235,9 +235,9 @@ qiime diversity alpha-rarefaction \
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny rooted-tree.qza \
-  --i-table table.qza \
-  --p-sampling-depth 2020 \
-  --m-metadata-file /mnt/datasets/project_1/mouse_tutorial/metadata.tsv \
+  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
+  --p-sampling-depth 8193 \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
   --output-dir core-metrics-results
 ```
 
