@@ -206,7 +206,7 @@ alpha-rarefaction curves
 
 ```bash
 qiime diversity alpha-rarefaction \
-  --i-table merged_table.qza \
+  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
   --i-phylogeny rooted-tree.qza \
   --p-max-depth 4996 \
   --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
