@@ -220,6 +220,15 @@ qiime diversity alpha-rarefaction \
   --o-visualization alpha-rarefaction.qzv
 ```
 
+```bash
+qiime diversity alpha-rarefaction \
+  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
+  --i-phylogeny rooted-tree.qza \
+  --p-max-depth 80000 \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization alpha-rarefaction_2.qzv
+```
+
 ## diversity metrics
 `--p-sampling-depth` is the rarefaction parameter
 
