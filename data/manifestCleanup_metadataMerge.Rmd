@@ -51,13 +51,14 @@ metadata <- full_join(human_metadata, mouse_metadata) %>%
 	# drop unused columns
 	select(-c(timepoint, sample_type)) %>%
 	# rename Treatment to starch_type
-	rename(starch_type = Treatment) %>%
+	rename(starch_type = Treatment,
+				 `sample-id` = sample_id) %>%
 	# create treatment group column (organism-treatment)
 	mutate(group = str_c(cohort, trt, sep = "-"))
 ```
 
 Export merged metadata:
 ```{r}
-write_delim(metadata, "metadata/metadata.tsv", delim = "/t")
+write_tsv(metadata, "metadata/metadata.tsv")
 ```
 
