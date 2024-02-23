@@ -27,6 +27,12 @@
 - get a head start on the metadata
 - research on strains of the bacteria we found and the relation with human health
 
+### Meeting with group members only - 10/FEB/2024
+#### notes
+- Compare metadata from both sets to find comparing variables
+- Only found treatment variable to compare
+- Group together RS treatments of mouse to 1 treatment group
+- Changed column names in both datasets 
 
 ### Meeting 3 - 15/FEB/2024
 #### agenda
@@ -40,7 +46,7 @@
 - merge meta datafiles
 - proposal aims:
 - 	aim 1 - data wrangling
--	aim 2 - qiime2 processing, done in parallel on two datasets - check what kind of data is used in mouse and human dataset, create a detached screen when running in parallel
+-	aim 2 - qiime2 processing, done in parallel on two datasets - check what kind of data is used in mouse and human dataset, create a detached screen when running in parallel, use the whole SILVA database for taxonomic classification
 - 	aim 3 - alpha beta diversity metrics to compare cohorts (qiime and R) - PCA plot to see if points are clustered together
 - 	aim 4 - core microbiome to compare
 - 	aim 5 - differential abundance
