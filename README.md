@@ -79,4 +79,24 @@
 - make sure all bioinformatic tools are cited Qiime2 and dada2
 - figure legends title for overall takeaway for the figure and detail explanation for each figure
 
+
+### Meeting 5 - 29/Feb/2024
+#### Agenda
+- identify next steps for analyses
+- update proposal if necessary
+
+### Notes
+- PcoA plot:
+  	- there are some groups that are formed, but metadata is not comprehensive enough to show significant data
+  	- for both mice and human, there is no significance between control and starch groups
+- indicator taxa analyses between human and mice data
+  	- use merged dataset
+- all analyses (everything that will be done in R) will be continued using the merged dataset, except for the PcoA plot which will require qiime2 processing separately
+- mouse data does not specify which diet types include type 2 resistant starch, just mentions resistant starch as a whole
+  	- we can do our own research to see which diet types refer to a certain resistant starch type and perform comparisons from there
+  	- difference between type 2 resistant starch and other types is based on differences in processing
+  	- can potentially use "resistant starch" as an umbrella term from now to be inclusive of all resistant starch types that may have used in the mouse 	and human data sets
+ 
+- work on aims 3 and 4 for next week
+
    
