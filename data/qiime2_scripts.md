@@ -155,7 +155,7 @@ qiime feature-table summarize \
 
 Taxonomic analysis
 (Use the complete SILVA classifier, not the region specific ones.)
-
+merged
 ```bash
 qiime feature-classifier classify-sklearn \
   --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
@@ -163,11 +163,29 @@ qiime feature-classifier classify-sklearn \
   --o-classification taxonomy.qza
 ```
 
+human
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
+  --i-reads rep-seqs_human.qza \
+  --o-classification taxonomy_human.qza
+```
+
 Taxonomy barplots
+Merged
 ```bash
 qiime taxa barplot \
   --i-table merged_table.qza \
   --i-taxonomy taxonomy.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization taxa-bar-plots.qzv
+```
+
+human
+```bash
+qiime taxa barplot \
+  --i-table table_human.qza \
+  --i-taxonomy taxonomy_human.qza \
   --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
   --o-visualization taxa-bar-plots.qzv
 ```
