@@ -1,0 +1,78 @@
+---
+title: "phyloseq construction"
+author: "Alma Garcia"
+date: "2024-03-02"
+output: html_document
+---
+
+# Phyloseq Construction
+Load packages and import data:
+```{r}
+library(phyloseq)
+library(ape)
+library(tidyverse)
+library(vegan)
+```
+
+```{r}
+otu <- read_delim("../20_qiime/exports/feature-table.txt", delim = "\t", skip = 1)
+metadata <- read_delim("../10_metadata-and-manifest/metadata.tsv", delim = "\t")
+taxonomy <- read_delim("../20_qiime/exports/taxonomy.tsv", delim = "\t")
+tree <- read.tree("../20_qiime/exports/tree.nwk")
+```
+## Formatting tables
+### OTU
+```{r}
+# remove #OTU ID column from matrix
+otu_mat <- as.matrix(otu[,-1])
+# change rownames into #OTU ID column
+rownames(otu_mat) <- otu$`#OTU ID`
+# create phyloseq otu table
+OTU <- otu_table(otu_mat, taxa_are_rows = TRUE)
+# check OTU class (should be phyloseq)
+class(OTU)
+```
+### Metadata
+```{r}
+# remove sample-id column from dataframe
+samp_data <- as.data.frame(metadata[,-1])
+# change rownames into sample-id
+rownames(samp_data) <- metadata$`sample-id`
+# create phyloseq sam table
+SAM <- sample_data(samp_data)
+# check SAM class (should be phyloseq)
+class(SAM)
+```
+### Taxonomy
+```{r}
+tax_mat <- taxonomy %>% 
+	# remove Feature ID and Confidence cols
+	select(-c(`Feature ID`, Confidence)) %>%
+	# reformat taxon strings, separate them into different columns
+	separate(col = Taxon, sep = "; ",
+					 into = c("Domain","Phylum","Class","Order","Family","Genus","Species")
+					 ) %>%
+	# remove the underscores and letters from taxon names
+	mutate(
+		across(c("Domain","Phylum","Class","Order","Family","Genus","Species"),
+				 function(x) str_remove_all(x, ".__"))) %>%
+	# save as matrix
+	as.matrix()
+# change rownames of matrix to Feature ID
+rownames(tax_mat) <- taxonomy$`Feature ID`
+# create phyloseq tax table
+TAX <- tax_table(tax_mat)
+# check TAX class (should be phyloseq)
+class(TAX)
+```
+## Merge into phyloseq object
+```{r}
+starch <- phyloseq(OTU, SAM, TAX, tree)
+# check
+class(starch)
+```
+Export phyloseq object for analysis
+```{r}
+write_rds(starch, "../11_phyloseq/starch_unfiltered_phyloseq.RDS")
+```
+

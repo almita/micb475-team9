@@ -26,7 +26,7 @@ qiime demux summarize \
 qiime tools import \
 --type "SampleData[SequencesWithQuality]" \
 --input-format SingleEndFastqManifestPhred33V2 \
---input-path /home/qiime2/data/metadata/mouse_manifest_corrected.tsv \
+--input-path /home/qiime2/data/metadata/mouse_manifest.tsv \
 --output-path demux_mouse.qza
 ```
 
@@ -44,7 +44,7 @@ qiime demux summarize \
 
 ```bash
 qiime dada2 denoise-single \
---i-demultiplexed-seqs /home/qiime2/data/output/demux_human.qza \
+--i-demultiplexed-seqs /home/qiime2/data/20_qiime/demux_human.qza \
 --p-trim-left 0 \
 --p-trunc-len 260 \
 --o-representative-sequences rep-seqs_human.qza \
@@ -139,6 +139,7 @@ qiime feature-table merge-seqs \
 ```
 
 Visualization
+
 ```bash
 qiime feature-table tabulate-seqs \
   --i-data merged_rep-seqs.qza \
@@ -151,11 +152,13 @@ qiime feature-table summarize \
   --o-visualization merged_table.qzv \
   --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
+
 ## taxonomic classification
 
 Taxonomic analysis
 (Use the complete SILVA classifier, not the region specific ones.)
 merged
+
 ```bash
 qiime feature-classifier classify-sklearn \
   --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
@@ -164,6 +167,7 @@ qiime feature-classifier classify-sklearn \
 ```
 
 human
+
 ```bash
 qiime feature-classifier classify-sklearn \
   --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
@@ -172,6 +176,7 @@ qiime feature-classifier classify-sklearn \
 ```
 
 mouse
+
 ```bash
 qiime feature-classifier classify-sklearn \
   --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
@@ -181,6 +186,7 @@ qiime feature-classifier classify-sklearn \
 
 Taxonomy barplots
 Merged
+
 ```bash
 qiime taxa barplot \
   --i-table merged_table.qza \
@@ -190,6 +196,7 @@ qiime taxa barplot \
 ```
 
 Human
+
 ```bash
 qiime taxa barplot \
   --i-table table_human.qza \
@@ -197,7 +204,9 @@ qiime taxa barplot \
   --m-metadata-file /home/qiime2/data/metadata/human_metadata.tsv \
   --o-visualization taxa-bar-plots_human.qzv
 ```
+
 Mouse 
+
 ```bash
 qiime taxa barplot \
   --i-table table_mouse.qza \
@@ -205,8 +214,10 @@ qiime taxa barplot \
   --m-metadata-file /home/qiime2/data/metadata/mouse_metadata.tsv \
   --o-visualization taxa-bar-plots_mouse.qzv
 ```
+
 Visualization
 Merged
+
 ```bash
 qiime metadata tabulate \
   --m-input-file taxonomy.qza \
@@ -214,6 +225,7 @@ qiime metadata tabulate \
 ```
 
 Human
+
 ```bash
 qiime metadata tabulate \
   --m-input-file taxonomy_human.qza \
@@ -221,6 +233,7 @@ qiime metadata tabulate \
 ```
 
 Mouse
+
 ```bash
 qiime metadata tabulate \
   --m-input-file taxonomy_mouse.qza \
@@ -231,6 +244,7 @@ qiime metadata tabulate \
 
 taxonomy based filtering
 Merged
+
 ```bash
 qiime taxa filter-table \
   --i-table merged_table.qza \
@@ -240,6 +254,7 @@ qiime taxa filter-table \
 ```
 
 Human 
+
 ```bash
 qiime taxa filter-table \
   --i-table table_human.qza \
@@ -249,6 +264,7 @@ qiime taxa filter-table \
 ```
 
 Mouse
+
 ```bash
 qiime taxa filter-table \
   --i-table table_mouse.qza \
@@ -258,6 +274,7 @@ qiime taxa filter-table \
 ```
 
 Visualization
+
 ```bash
 qiime feature-table summarize \
   --i-table merged_table-no-mitochondria-no-chloroplast.qza \
@@ -275,6 +292,7 @@ qiime feature-table summarize \
 ```
 
 Mouse
+
 ```bash
 qiime feature-table summarize \
   --i-table mouse_table-no-mitochondria-no-chloroplast.qza \
@@ -283,7 +301,9 @@ qiime feature-table summarize \
 ```
 
 ## phylogenetic tree
+
 Merged
+
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences merged_rep-seqs.qza \
@@ -294,6 +314,7 @@ qiime phylogeny align-to-tree-mafft-fasttree \
 ```
 
 Human
+
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences rep-seqs_human.qza \
@@ -304,6 +325,7 @@ qiime phylogeny align-to-tree-mafft-fasttree \
 ```
 
 Mouse
+
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences rep-seqs_mouse.qza \
@@ -335,8 +357,8 @@ qiime diversity alpha-rarefaction \
   --o-visualization alpha-rarefaction_2.qzv
 ```
 
-
 ## diversity metrics
+
 `--p-sampling-depth` is the rarefaction parameter
 
 ```bash
@@ -349,6 +371,7 @@ qiime diversity core-metrics-phylogenetic \
 ```
 
 Human
+
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny human_rooted-tree.qza \
@@ -359,6 +382,7 @@ qiime diversity core-metrics-phylogenetic \
 ```
 
 Mouse
+
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny mouse_rooted-tree.qza \
@@ -370,9 +394,7 @@ qiime diversity core-metrics-phylogenetic \
 
 ## alpha diversity analysis
 
-
 ## beta diversity analysis
-
 
 ## taxonomic classification
 
@@ -388,6 +410,7 @@ qiime feature-classifier classify-sklearn \
 ## exporting files
 
 Feature table:
+
 ```bash
 qiime tools export \
     --input-path merged_table-no-mitochondria-no-chloroplast.qza \
@@ -397,6 +420,7 @@ biom convert -i feature-table.biom --to-tsv -o feature-table.txt
 ```
 
 Taxonomy:
+
 ```bash
 qiime tools export \
     --input-path taxonomy.qza \
@@ -404,6 +428,7 @@ qiime tools export \
 ```
 
 Phylogenetic Tree:
+
 ```bash
 qiime tools export \
     --input-path rooted-tree.qza \
