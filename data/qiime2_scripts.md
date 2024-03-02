@@ -171,6 +171,14 @@ qiime feature-classifier classify-sklearn \
   --o-classification taxonomy_human.qza
 ```
 
+mouse
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier /mnt/datasets/classifiers/silva-138-99-nb-classifier.qza \
+  --i-reads rep-seqs_mouse.qza \
+  --o-classification taxonomy_mouse.qza
+```
+
 Taxonomy barplots
 Merged
 ```bash
@@ -189,7 +197,14 @@ qiime taxa barplot \
   --m-metadata-file /home/qiime2/data/metadata/human_metadata.tsv \
   --o-visualization taxa-bar-plots_human.qzv
 ```
-
+Mouse 
+```bash
+qiime taxa barplot \
+  --i-table table_mouse.qza \
+  --i-taxonomy taxonomy_mouse.qza \
+  --m-metadata-file /home/qiime2/data/metadata/mouse_metadata.tsv \
+  --o-visualization taxa-bar-plots_mouse.qzv
+```
 Visualization
 Merged
 ```bash
@@ -203,6 +218,13 @@ Human
 qiime metadata tabulate \
   --m-input-file taxonomy_human.qza \
   --o-visualization taxonomy_human.qzv
+```
+
+Mouse
+```bash
+qiime metadata tabulate \
+  --m-input-file taxonomy_mouse.qza \
+  --o-visualization taxonomy_mouse.qzv
 ```
 
 ## filter
@@ -225,6 +247,16 @@ qiime taxa filter-table \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table human_table-no-mitochondria-no-chloroplast.qza
 ```
+
+Mouse
+```bash
+qiime taxa filter-table \
+  --i-table table_mouse.qza \
+  --i-taxonomy taxonomy_mouse.qza \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table mouse_table-no-mitochondria-no-chloroplast.qza
+```
+
 Visualization
 ```bash
 qiime feature-table summarize \
@@ -242,9 +274,16 @@ qiime feature-table summarize \
   --m-sample-metadata-file /home/qiime2/data/metadata/human_metadata.tsv
 ```
 
+Mouse
+```bash
+qiime feature-table summarize \
+  --i-table mouse_table-no-mitochondria-no-chloroplast.qza \
+  --o-visualization mouse_table-no-mitochondria-no-chloroplast.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/mouse_metadata.tsv
+```
 
 ## phylogenetic tree
-
+Merged
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences merged_rep-seqs.qza \
@@ -253,6 +292,8 @@ qiime phylogeny align-to-tree-mafft-fasttree \
   --o-tree unrooted-tree.qza \
   --o-rooted-tree rooted-tree.qza
 ```
+
+Human
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences rep-seqs_human.qza \
@@ -260,6 +301,16 @@ qiime phylogeny align-to-tree-mafft-fasttree \
   --o-masked-alignment human_masked-aligned-rep-seqs.qza \
   --o-tree human_unrooted-tree.qza \
   --o-rooted-tree human_rooted-tree.qza
+```
+
+Mouse
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs_mouse.qza \
+  --o-alignment mouse_aligned-rep-seqs.qza \
+  --o-masked-alignment mouse_masked-aligned-rep-seqs.qza \
+  --o-tree mouse_unrooted-tree.qza \
+  --o-rooted-tree mouse_rooted-tree.qza
 ```
 
 ## rarefaction
@@ -296,7 +347,8 @@ qiime diversity core-metrics-phylogenetic \
   --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
   --output-dir core-metrics-results
 ```
-human
+
+Human
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny human_rooted-tree.qza \
@@ -304,6 +356,16 @@ qiime diversity core-metrics-phylogenetic \
   --p-sampling-depth 8193 \
   --m-metadata-file /home/qiime2/data/metadata/human_metadata.tsv \
   --output-dir human_core-metrics-results
+```
+
+Mouse
+```bash
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny mouse_rooted-tree.qza \
+  --i-table mouse_table-no-mitochondria-no-chloroplast.qza \
+  --p-sampling-depth 8193 \
+  --m-metadata-file /home/qiime2/data/metadata/mouse_metadata.tsv \
+  --output-dir mouse_core-metrics-results
 ```
 
 ## alpha diversity analysis
