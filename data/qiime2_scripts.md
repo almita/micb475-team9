@@ -299,11 +299,11 @@ qiime diversity core-metrics-phylogenetic \
 human
 ```bash
 qiime diversity core-metrics-phylogenetic \
-  --i-phylogeny rooted-tree.qza \
-  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
+  --i-phylogeny human_rooted-tree.qza \
+  --i-table human_table-no-mitochondria-no-chloroplast.qza \
   --p-sampling-depth 8193 \
-  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
-  --output-dir core-metrics-results
+  --m-metadata-file /home/qiime2/data/metadata/human_metadata.tsv \
+  --output-dir human_core-metrics-results
 ```
 
 ## alpha diversity analysis
