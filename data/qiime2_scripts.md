@@ -284,9 +284,19 @@ qiime diversity alpha-rarefaction \
   --o-visualization alpha-rarefaction_2.qzv
 ```
 
+
 ## diversity metrics
 `--p-sampling-depth` is the rarefaction parameter
 
+```bash
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
+  --p-sampling-depth 8193 \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --output-dir core-metrics-results
+```
+human
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-phylogeny rooted-tree.qza \
