@@ -253,6 +253,14 @@ qiime phylogeny align-to-tree-mafft-fasttree \
   --o-tree unrooted-tree.qza \
   --o-rooted-tree rooted-tree.qza
 ```
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs_human.qza \
+  --o-alignment human_aligned-rep-seqs.qza \
+  --o-masked-alignment human_masked-aligned-rep-seqs.qza \
+  --o-tree human_unrooted-tree.qza \
+  --o-rooted-tree human_rooted-tree.qza
+```
 
 ## rarefaction
 
