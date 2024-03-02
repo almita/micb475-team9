@@ -181,21 +181,30 @@ qiime taxa barplot \
   --o-visualization taxa-bar-plots.qzv
 ```
 
-human
+Human
 ```bash
 qiime taxa barplot \
   --i-table table_human.qza \
   --i-taxonomy taxonomy_human.qza \
-  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
-  --o-visualization taxa-bar-plots.qzv
+  --m-metadata-file /home/qiime2/data/metadata/human_metadata.tsv \
+  --o-visualization taxa-bar-plots_human.qzv
 ```
 
 Visualization
+Merged
 ```bash
 qiime metadata tabulate \
   --m-input-file taxonomy.qza \
   --o-visualization taxonomy.qzv
 ```
+
+Human
+```bash
+qiime metadata tabulate \
+  --m-input-file taxonomy_human.qza \
+  --o-visualization taxonomy_human.qzv
+```
+
 ## filter
 
 taxonomy based filtering
