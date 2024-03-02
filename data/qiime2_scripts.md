@@ -208,12 +208,22 @@ qiime metadata tabulate \
 ## filter
 
 taxonomy based filtering
+Merged
 ```bash
 qiime taxa filter-table \
   --i-table merged_table.qza \
   --i-taxonomy taxonomy.qza \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table merged_table-no-mitochondria-no-chloroplast.qza
+```
+
+Human 
+```bash
+qiime taxa filter-table \
+  --i-table table_human.qza \
+  --i-taxonomy taxonomy_human.qza \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table human_table-no-mitochondria-no-chloroplast.qza
 ```
 Visualization
 ```bash
@@ -222,6 +232,16 @@ qiime feature-table summarize \
   --o-visualization merged_table-no-mitochondria-no-chloroplast.qzv \
   --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
+
+Human
+
+```bash
+qiime feature-table summarize \
+  --i-table human_table-no-mitochondria-no-chloroplast.qza \
+  --o-visualization human_table-no-mitochondria-no-chloroplast.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/human_metadata.tsv
+```
+
 
 ## phylogenetic tree
 
