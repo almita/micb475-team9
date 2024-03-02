@@ -384,3 +384,28 @@ qiime feature-classifier classify-sklearn \
   --i-reads rep-seqs.qza \
   --o-classification taxonomy.qza
 ```
+
+## exporting files
+
+Feature table:
+```bash
+qiime tools export \
+    --input-path merged_table-no-mitochondria-no-chloroplast.qza \
+    --output-path exports/
+
+biom convert -i feature-table.biom --to-tsv -o feature-table.txt
+```
+
+Taxonomy:
+```bash
+qiime tools export \
+    --input-path taxonomy.qza \
+    --output-path exports/
+```
+
+Phylogenetic Tree:
+```bash
+qiime tools export \
+    --input-path rooted-tree.qza \
+    --output-path exports/
+```
