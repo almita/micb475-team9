@@ -1,0 +1,96 @@
+---
+title: "Filter and Rarefying"
+author: "Alma Garcia"
+date: "2024-03-04"
+output: html_document
+---
+
+# Filtering and Rarefying
+Import libraries and data
+```{r}
+library(phyloseq)
+library(vegan)
+library(tidyverse)
+```
+
+```{r}
+starch_unfiltered <- readRDS("../11_phyloseq/starch_unfiltered_phyloseq.RDS")
+```
+
+## Filtering
+Removing off-target taxa
+```{r}
+starch_taxa <- subset_taxa(starch_unfiltered, 
+													 Domain == c("Bacteria", "Archaea"))
+```
+
+Save filtered non-rarefied phyloseq
+```{r}
+write_rds(starch_taxa, "../11_phyloseq/starch_filtered_phyloseq.RDS")
+```
+
+
+## Rarefying
+
+```{r}
+dephyloseq <- function(phylo_obj){ 
+	## get the metadata
+	meta = as.data.frame(as.matrix(phylo_obj@sam_data)) 
+	## how many metadata columns you have
+	metacols = ncol(meta)+1
+	## get out the otu table
+	## if your metadta is empty after running this, you need to use #otu = as.data.frame(t(as.matrix(phylo_obj@otu_table)))
+	otu = as.data.frame(t(as.matrix(phylo_obj@otu_table)))
+	## merge the metadata and otu table by the rownames (sample ids from the Illumina sequence)
+	mo = merge(meta, otu, by=0) 
+	## get out the taxonomy file
+	tax = as.data.frame(phylo_obj@tax_table)
+	## get the ASV ID out. This the matches the placeholder ASV ID in the OTU table
+	tax = tax %>% rownames_to_column(var="asv_id")
+	## pivot longer to be able to match the ASVs in the OTU table to the taxonomy table
+	mo = mo %>% pivot_longer(cols = -c(1:metacols), names_to = "asv_id", values_to="asv_abundance") 
+	## Join the metadata and otu table with the taoxnomy table
+	mot = full_join(mo, tax)
+  ## Specify the output for the dephyloseq funciton
+output = mot 
+}
+```
+
+```{r}
+starch_taxa@sam_data$sample_sums <- as.numeric(sample_sums(starch_taxa))
+```
+
+
+```{r}
+starch_df <- dephyloseq(starch_taxa)
+```
+
+```{r}
+df <- starch_df %>%
+	select(c(Row.names, group, sample_sums)) %>%
+	rename(`sample-id` = Row.names) %>%
+	distinct()
+```
+
+```{r}
+depth <- 4316
+```
+
+```{r}
+df$sample_sums <- as.numeric(df$sample_sums)
+df$color <- if_else(df$sample_sums>=depth, "keep", "discard")
+```
+
+```{r}
+df %>% ggplot(aes(as.character(`sample-id`), as.numeric(sample_sums))) + 
+	geom_col(aes(fill = color)) + 
+	geom_hline(aes(yintercept = depth)) +
+	facet_wrap(.~group,
+						 scales = "free")
+```
+
+```{r}
+starch_rare <- rarefy_even_depth(starch_taxa, rngseed = 1, sample.size = depth)
+write_rds(starch_rare, "../11_phyloseq/starch_rarefied_phyloseq.RDS")
+```
+
