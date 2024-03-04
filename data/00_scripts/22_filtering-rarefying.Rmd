@@ -14,7 +14,7 @@ library(tidyverse)
 ```
 
 ```{r}
-starch_unfiltered <- readRDS("../11_phyloseq/starch_unfiltered_phyloseq.RDS")
+starch_unfiltered <- readRDS("../21_phyloseq/starch_unfiltered_phyloseq.RDS")
 ```
 
 ## Filtering
@@ -26,7 +26,7 @@ starch_taxa <- subset_taxa(starch_unfiltered,
 
 Save filtered non-rarefied phyloseq
 ```{r}
-write_rds(starch_taxa, "../11_phyloseq/starch_filtered_phyloseq.RDS")
+write_rds(starch_taxa, "../21_phyloseq/starch_filtered_phyloseq.RDS")
 ```
 
 
@@ -91,6 +91,6 @@ df %>% ggplot(aes(as.character(`sample-id`), as.numeric(sample_sums))) +
 
 ```{r}
 starch_rare <- rarefy_even_depth(starch_taxa, rngseed = 1, sample.size = depth)
-write_rds(starch_rare, "../11_phyloseq/starch_rarefied_phyloseq.RDS")
+write_rds(starch_rare, "../21_phyloseq/starch_rarefied_phyloseq.RDS")
 ```
 

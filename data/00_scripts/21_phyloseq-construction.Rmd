@@ -73,6 +73,6 @@ class(starch)
 ```
 Export phyloseq object for analysis
 ```{r}
-write_rds(starch, "../11_phyloseq/starch_unfiltered_phyloseq.RDS")
+write_rds(starch, "../21_phyloseq/starch_unfiltered_phyloseq.RDS")
 ```
 
