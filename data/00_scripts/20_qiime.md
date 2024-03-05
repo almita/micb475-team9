@@ -428,6 +428,46 @@ qiime diversity alpha-group-significance \
 
 ## beta diversity analysis
 
+Bray-Curtis
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/bray_curtis_distance_matrix.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --m-metadata-column group \
+  --o-visualization core-metrics-results/beta-diversity/bray-curtis-group-significance.qzv \
+  --p-pairwise
+```
+Jaccard
+
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/jaccard_distance_matrix.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --m-metadata-column group \
+  --o-visualization core-metrics-results/beta-diversity/jaccard-group-significance.qzv \
+  --p-pairwise
+```
+Unweighted Unifrac
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --m-metadata-column group \
+  --o-visualization core-metrics-results/beta-diversity/unweighted-unifrac-group-significance.qzv \
+  --p-pairwise
+```
+
+Weighted Unifrac
+```
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/weighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --m-metadata-column group \
+  --o-visualization core-metrics-results/beta-diversity/weighted-unifrac-group-significance.qzv \
+  --p-pairwise
+```
+
+
 ## taxonomic classification
 
 Use the complete SILVA classifier, not the region specific ones.
