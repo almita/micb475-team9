@@ -1,9 +1,342 @@
 ---
-title: "30_diversity-analysis"
-author: "Alma Garcia"
-date: "2024-03-04"
-output: html_document
+title: "Diversity Analysis"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
 ---
 
 # Diversity Analysis
+Import libraries and data
+```{r}
+library(phyloseq)
+library(ape)
+library(tidyverse)
+library(picante)
+```
 
+```{r}
+starch <- read_rds("../21_phyloseq/starch_rarefied_phyloseq.RDS")
+```
+
+Separate human and mouse for the independent analysis
+```{r}
+human <- subset_samples(starch, cohort == "human")
+mouse <- subset_samples(starch, cohort == "mouse")
+```
+
+```{r}
+pal <- c("#DD4124FF", "#faa478", "#6ac1de", "#0269a1FF")
+pal2 <- c("#00346EFF", "#007CBFFF", "#06ABDFFF", "#EDD03EFF", "#F5A200FF", "#6D8600FF", "#424D0CFF")
+```
+
+
+## Alpha diversity
+
+### Shannon
+```{r}
+richness <- estimate_richness(starch)
+rownames(richness) <- rownames(starch@sam_data)
+```
+
+```{r}
+starch_rich <- merge(starch@sam_data, richness, by = 0) %>% rename(sample_id = Row.names)
+```
+
+```{r}
+starch_rich %>% ggplot(aes(group, Shannon)) +
+	geom_boxplot(aes(fill = group)) +
+	scale_fill_manual(values = pal) +
+	ylab("Shannon Index") +
+	xlab("Group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none"
+	)
+```
+
+### Faith's Phylogenetic Diversity 
+```{r}
+phylo_dist <- pd(t(otu_table(starch)), phy_tree(starch),
+                 include.root=F) 
+
+# add PD to metadata table
+starch_rich$PD <- phylo_dist$PD
+```
+
+```{r}
+ggplot(sample_data(starch_rich), aes(group, PD)) + 
+	geom_boxplot(aes(fill = group)) +
+	scale_fill_manual(values = pal) +
+  xlab("Group") +
+  ylab("Phylogenetic Diversity") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none"
+	)
+```
+
+## Beta Diversity
+```{r}
+starchdf <- data.frame(sample_data(starch))
+```
+
+### Bray Curtis
+
+#### Merged
+```{r}
+bc_dm <- distance(starch, method="bray")
+
+bc_bd <- betadisper(bc_dm, starch_rich$group)
+permutest(bc_bd)
+```
+
+
+```{r}
+pcoa_bc <- ordinate(starch, method="PCoA", distance=bc_dm)
+
+plot_ordination(starch, pcoa_bc, color = "group") +
+	scale_color_manual(values = pal) +
+  labs(col = "Group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+	
+```
+#### Human
+```{r}
+human_bc_dm <- distance(human, method="bray")
+
+human_pcoa_bc <- ordinate(human, method="PCoA", distance=human_bc_dm)
+
+plot_ordination(human, human_pcoa_bc, color = "trt") +
+	scale_color_manual(values = pal[1:2]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+#### Mouse
+```{r}
+mouse_bc_dm <- distance(mouse, method="bray")
+
+mouse_pcoa_bc <- ordinate(mouse, method="PCoA", distance=mouse_bc_dm)
+
+plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
+	scale_color_manual(values = pal[3:4]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+```{r}
+plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
+	scale_color_manual(values = pal2) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+### Jaccard
+#### Merged
+```{r}
+jc_dm <- distance(starch, method = "jaccard", binary = TRUE)
+
+pcoa_jc <- ordinate(starch, method="PCoA", distance=jc_dm)
+
+plot_ordination(starch, pcoa_jc, color = "group") +
+	scale_color_manual(values = pal) +
+  labs(col = "Group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+	
+```
+
+#### Human
+```{r}
+human_jc_dm <- distance(human, method = "jaccard", binary = TRUE)
+
+human_pcoa_jc <- ordinate(human, method="PCoA", distance=human_jc_dm)
+
+plot_ordination(human, human_pcoa_jc, color = "trt") +
+	scale_color_manual(values = pal[1:2]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+#### Mouse
+```{r}
+mouse_jc_dm <- distance(mouse, method = "jaccard", binary = TRUE)
+
+mouse_pcoa_jc <- ordinate(mouse, method="PCoA", distance=mouse_jc_dm)
+
+plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
+	scale_color_manual(values = pal[3:4]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+By `starch_type`
+```{r}
+plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
+	scale_color_manual(values = pal2) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+### Unweighted Unifrac
+
+#### Merged
+```{r}
+uu_dm <- distance(starch, method = "unifrac")
+
+pcoa_uu <- ordinate(starch, method="PCoA", distance=uu_dm)
+
+plot_ordination(starch, pcoa_uu, color = "group") +
+	scale_color_manual(values = pal) +
+  labs(col = "Group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+	
+```
+
+#### Human
+```{r}
+human_uu_dm <- distance(human, method = "unifrac")
+
+human_pcoa_uu <- ordinate(human, method="PCoA", distance=human_uu_dm)
+
+plot_ordination(human, human_pcoa_uu, color = "trt") +
+	scale_color_manual(values = pal[1:2]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+#### Mouse
+```{r}
+mouse_uu_dm <- distance(mouse, method = "unifrac")
+
+mouse_pcoa_uu <- ordinate(mouse, method="PCoA", distance=mouse_uu_dm)
+
+plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
+	scale_color_manual(values = pal[3:4]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+By `starch_type`
+```{r}
+plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
+	scale_color_manual(values = pal2) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+### Weighted Unifrac
+#### Merged
+```{r}
+wu_dm <- distance(starch, method = "wunifrac")
+
+pcoa_wu <- ordinate(starch, method="PCoA", distance=wu_dm)
+
+plot_ordination(starch, pcoa_wu, color = "group") +
+	scale_color_manual(values = pal) +
+  labs(col = "Group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+	
+```
+
+#### Human
+```{r}
+human_wu_dm <- distance(human, method = "wunifrac")
+
+human_pcoa_wu <- ordinate(human, method="PCoA", distance=human_wu_dm)
+
+plot_ordination(human, human_pcoa_wu, color = "trt") +
+	scale_color_manual(values = pal[1:2]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+#### Mouse
+```{r}
+mouse_wu_dm <- distance(mouse, method = "wunifrac")
+
+mouse_pcoa_wu <- ordinate(mouse, method="PCoA", distance=mouse_wu_dm)
+
+plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
+	scale_color_manual(values = pal[3:4]) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
+
+By `starch_type`
+```{r}
+plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
+	scale_color_manual(values = pal2) +
+  labs(col = "Treatment") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+```
