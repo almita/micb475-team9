@@ -36,7 +36,6 @@ pal2 <- c("#00346EFF", "#007CBFFF", "#06ABDFFF", "#EDD03EFF", "#F5A200FF", "#6D8
 
 ## Alpha diversity
 
-### Shannon
 ```{r}
 richness <- estimate_richness(starch)
 rownames(richness) <- rownames(starch@sam_data)
@@ -46,6 +45,32 @@ rownames(richness) <- rownames(starch@sam_data)
 starch_rich <- merge(starch@sam_data, richness, by = 0) %>% rename(sample_id = Row.names)
 ```
 
+WIP:
+```{r}
+otu <- otu_table(starch) %>% as.matrix() 
+```
+
+```{r}
+data_evenness <- diversity(otu) / log(specnumber(otu))
+```
+
+
+### Shannon
+#### Kruskal-Wallis
+```{r}
+shannon_kw <- kruskal.test(Shannon ~ group, data = starch_rich)
+shannon_kw
+
+if (shannon_kw$p.value < 0.05){
+	pairwise.wilcox.test(starch_rich$Shannon, starch_rich$group, 
+                       p.adjust = "bonferroni")
+}
+```
+There is a significant difference (p-val < 0.05) in the Shannon index between  mouse-C & human-C, mouse-C & human-RS, and mouse-RS & human-RS.
+
+- _I could also run tests to see the individual differences between cohort and treatments_
+
+#### Plot
 ```{r}
 starch_rich %>% ggplot(aes(group, Shannon)) +
 	geom_boxplot(aes(fill = group)) +
@@ -69,6 +94,20 @@ phylo_dist <- pd(t(otu_table(starch)), phy_tree(starch),
 starch_rich$PD <- phylo_dist$PD
 ```
 
+#### Kruskal-Wallis
+```{r}
+pd_kw <- kruskal.test(PD ~ group, data = starch_rich)
+pd_kw
+
+if (pd_kw$p.value < 0.05){
+	pairwise.wilcox.test(starch_rich$PD, starch_rich$group, 
+                       p.adjust = "bonferroni")
+}
+```
+There is no significant difference in Faith's phylogenetic distance between the groups.
+
+#### Plot
+
 ```{r}
 ggplot(sample_data(starch_rich), aes(group, PD)) + 
 	geom_boxplot(aes(fill = group)) +
@@ -85,7 +124,9 @@ ggplot(sample_data(starch_rich), aes(group, PD)) +
 
 ## Beta Diversity
 ```{r}
-starchdf <- data.frame(sample_data(starch))
+starchdf <- as.data.frame(sample_data(starch))
+humandf <- as.data.frame(sample_data(human))
+mousedf <- as.data.frame(sample_data(mouse))
 ```
 
 ### Bray Curtis
@@ -93,16 +134,14 @@ starchdf <- data.frame(sample_data(starch))
 #### Merged
 ```{r}
 bc_dm <- distance(starch, method="bray")
-
-bc_bd <- betadisper(bc_dm, starch_rich$group)
-permutest(bc_bd)
+adonis2(bc_dm ~ group, data = data.frame(starchdf))
 ```
-
+There is a significant difference between groups.
 
 ```{r}
 pcoa_bc <- ordinate(starch, method="PCoA", distance=bc_dm)
-
 plot_ordination(starch, pcoa_bc, color = "group") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -115,10 +154,15 @@ plot_ordination(starch, pcoa_bc, color = "group") +
 #### Human
 ```{r}
 human_bc_dm <- distance(human, method="bray")
+adonis2(human_bc_dm ~ trt, data = data.frame(humandf))
+```
+There is no significant difference between treatments. 
 
+```{r}
 human_pcoa_bc <- ordinate(human, method="PCoA", distance=human_bc_dm)
 
 plot_ordination(human, human_pcoa_bc, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -131,10 +175,24 @@ plot_ordination(human, human_pcoa_bc, color = "trt") +
 #### Mouse
 ```{r}
 mouse_bc_dm <- distance(mouse, method="bray")
+adonis2(mouse_bc_dm ~ trt+starch_type, data = data.frame(mousedf))
+pw <- pairwiseAdonis::pairwise.adonis2(mouse_bc_dm ~ starch_type, data = data.frame(mousedf))
 
+print("significantly different pairs: ")
+for (i in range(2,(length(pw)))){
+	pair <- pw[[i]]
+	if (pair$`Pr(>F)`[1] < 0.05) {
+		print(names(pw)[i])
+	}
+}
+```
+There is no significant difference between treatments but there is at least two starch types with significantly different beta-diversities.  There are PTB-BEP and CKP-CTL (CTL is control). 
+
+```{r}
 mouse_pcoa_bc <- ordinate(mouse, method="PCoA", distance=mouse_bc_dm)
 
 plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -142,11 +200,11 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-```
-```{r}
+
 plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
-  labs(col = "Treatment") +
+  labs(col = "Starch Type") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -158,10 +216,15 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
 #### Merged
 ```{r}
 jc_dm <- distance(starch, method = "jaccard", binary = TRUE)
+adonis2(jc_dm ~ group, data = data.frame(starchdf))
+```
+There is a significant difference in beta diversity between groups.
 
+```{r}
 pcoa_jc <- ordinate(starch, method="PCoA", distance=jc_dm)
 
 plot_ordination(starch, pcoa_jc, color = "group") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -175,10 +238,15 @@ plot_ordination(starch, pcoa_jc, color = "group") +
 #### Human
 ```{r}
 human_jc_dm <- distance(human, method = "jaccard", binary = TRUE)
+adonis2(human_jc_dm ~ trt, data = data.frame(humandf))
+```
+Not significantly different.
 
+```{r}
 human_pcoa_jc <- ordinate(human, method="PCoA", distance=human_jc_dm)
 
 plot_ordination(human, human_pcoa_jc, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -191,10 +259,24 @@ plot_ordination(human, human_pcoa_jc, color = "trt") +
 #### Mouse
 ```{r}
 mouse_jc_dm <- distance(mouse, method = "jaccard", binary = TRUE)
+adonis2(mouse_jc_dm ~ trt+starch_type, data = data.frame(mousedf))
+pw <- pairwiseAdonis::pairwise.adonis2(mouse_jc_dm ~ starch_type, data = data.frame(mousedf))
 
+print("significantly different pairs: ")
+for (i in range(2,(length(pw)))){
+	pair <- pw[[i]]
+	if (pair$`Pr(>F)`[1] < 0.05) {
+		print(names(pw)[i])
+	}
+}
+```
+Beta diversity is significantly different between groups and between CKP-CTL. 
+
+```{r}
 mouse_pcoa_jc <- ordinate(mouse, method="PCoA", distance=mouse_jc_dm)
 
 plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -202,13 +284,11 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-```
 
-By `starch_type`
-```{r}
 plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
-  labs(col = "Treatment") +
+  labs(col = "Starch Type") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -221,10 +301,15 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
 #### Merged
 ```{r}
 uu_dm <- distance(starch, method = "unifrac")
+adonis2(uu_dm ~ group, data = data.frame(starchdf))
+```
 
+
+```{r}
 pcoa_uu <- ordinate(starch, method="PCoA", distance=uu_dm)
 
 plot_ordination(starch, pcoa_uu, color = "group") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -238,10 +323,15 @@ plot_ordination(starch, pcoa_uu, color = "group") +
 #### Human
 ```{r}
 human_uu_dm <- distance(human, method = "unifrac")
+adonis2(human_uu_dm ~ trt, data = data.frame(humandf))
+```
+Not significantly different.
 
+```{r}
 human_pcoa_uu <- ordinate(human, method="PCoA", distance=human_uu_dm)
 
 plot_ordination(human, human_pcoa_uu, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -254,10 +344,24 @@ plot_ordination(human, human_pcoa_uu, color = "trt") +
 #### Mouse
 ```{r}
 mouse_uu_dm <- distance(mouse, method = "unifrac")
+adonis2(mouse_uu_dm ~ trt+starch_type, data = data.frame(mousedf))
+pw <- pairwiseAdonis::pairwise.adonis2(mouse_uu_dm ~ starch_type, data = data.frame(mousedf))
 
+print("significantly different pairs: ")
+for (i in range(2,(length(pw)))){
+	pair <- pw[[i]]
+	if (pair$`Pr(>F)`[1] < 0.05) {
+		print(names(pw)[i])
+	}
+}
+```
+No significant difference between treatments but there is a difference between CKP-CTL. 
+
+```{r}
 mouse_pcoa_uu <- ordinate(mouse, method="PCoA", distance=mouse_uu_dm)
 
 plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -265,13 +369,11 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-```
 
-By `starch_type`
-```{r}
 plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
-  labs(col = "Treatment") +
+  labs(col = "Starch Type") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -283,10 +385,15 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
 #### Merged
 ```{r}
 wu_dm <- distance(starch, method = "wunifrac")
+adonis2(wu_dm ~ group, data = data.frame(starchdf))
+```
+Significant difference between groups. 
 
+```{r}
 pcoa_wu <- ordinate(starch, method="PCoA", distance=wu_dm)
 
 plot_ordination(starch, pcoa_wu, color = "group") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -300,10 +407,15 @@ plot_ordination(starch, pcoa_wu, color = "group") +
 #### Human
 ```{r}
 human_wu_dm <- distance(human, method = "wunifrac")
+adonis2(human_wu_dm ~ trt, data = data.frame(humandf))
+```
 
+
+```{r}
 human_pcoa_wu <- ordinate(human, method="PCoA", distance=human_wu_dm)
 
 plot_ordination(human, human_pcoa_wu, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -316,10 +428,24 @@ plot_ordination(human, human_pcoa_wu, color = "trt") +
 #### Mouse
 ```{r}
 mouse_wu_dm <- distance(mouse, method = "wunifrac")
+adonis2(mouse_wu_dm ~ trt+starch_type, data = data.frame(mousedf))
+pw <- pairwiseAdonis::pairwise.adonis2(mouse_wu_dm ~ starch_type, data = data.frame(mousedf))
 
+print("significantly different pairs: ")
+for (i in range(2,(length(pw)))){
+	pair <- pw[[i]]
+	if (pair$`Pr(>F)`[1] < 0.05) {
+		print(names(pw)[i])
+	}
+}
+```
+
+
+```{r}
 mouse_pcoa_wu <- ordinate(mouse, method="PCoA", distance=mouse_wu_dm)
 
 plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -327,11 +453,9 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-```
 
-By `starch_type`
-```{r}
 plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
+	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Treatment") +
 	theme_bw() +
