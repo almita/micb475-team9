@@ -393,6 +393,38 @@ qiime diversity core-metrics-phylogenetic \
 ```
 
 ## alpha diversity analysis
+Observed Features
+
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/observed_features_vector.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization core-metrics-results/alpha-diversity/observed_features-group-significance.qzv
+```
+Evenness
+
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/evenness_vector.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization core-metrics-results/alpha-diversity/evenness-group-significance.qzv
+```
+Shannon 
+
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/shannon_vector.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization core-metrics-results/alpha-diversity/shannon-group-significance.qzv
+```
+Faith's PD
+
+```
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/faith_pd_vector.qza \
+  --m-metadata-file /home/qiime2/data/metadata/metadata.tsv \
+  --o-visualization core-metrics-results/alpha-diversity/faith-group-significance.qzv
+```
 
 ## beta diversity analysis
 
