@@ -457,7 +457,7 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
 plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
 	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
-  labs(col = "Treatment") +
+  labs(col = "Starch Type") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
