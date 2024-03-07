@@ -1,9 +1,9 @@
 # micb475-team9
 
-## meetings
+## Meetings
 
 ### Meeting 1 - 01/FEB/2024
-#### notes
+#### Notes
 - Discuss datasets that other groups are looking into
 - Want to explore dataset that is not heavily studied in MICB 475
 - Considering the Starch Resistant Dataset → received research paper from Evelyn from last term
@@ -11,12 +11,12 @@
 - For next meeting: select dataset, compose potential research questions
 
 ### Meeting 2 - 08/FEB/2024
-#### agenda
+#### Agenda
 - marine microbiome datasets
 - diabetic and children gut microbiome datasets
 - decide datasets and research questions
 
-#### notes
+#### Notes
 - validate mouse microbiome model vs human microbiome:
 	- compare first within cohort then between cohorts
 	- a good model would cluster very similarly
@@ -28,19 +28,19 @@
 - research on strains of the bacteria we found and the relation with human health
 
 ### Meeting with group members only - 10/FEB/2024
-#### notes
+#### Notes
 - Compare metadata from both sets to find comparing variables
 - Only found treatment variable to compare
 - Group together RS treatments of mouse to 1 treatment group
 - Changed column names in both datasets 
 
 ### Meeting 3 - 15/FEB/2024
-#### agenda
+#### Agenda
 - metadata cleanup files
 - proposal aims
 - divide the work
 
-#### notes
+#### Notes
 - take out mnt files from server for both datasets reconsile with metadata (only same datafiles stay)
 - use new manifest file when running the qiime in parallel
 - merge meta datafiles
@@ -66,7 +66,7 @@
 - got the quality plot for human dataset, unsure if demultiplexed or not? - need a barcode if we want to demultiplex ourselves
 - review team proposal
 
-#### notes
+#### Notes
 - Initial analysis was not as expected
 - Write up proposal as is and redo meta data analysis afterwards
 - take a look at different resistant starch in the mouse dataset
@@ -104,6 +104,21 @@
 - processed human and mouse files individually through Qiime for core metrics
 - generated diversity plots and statistical analysis 
 
+### Meeting 6 - 07/Mar/2024
 #### Agenda
 - look over progress (qiime core metrics and diversity plots and statisical analysis)
+
+### Notes
+- Plan to make corrections for the proposal (due March 12th)
+- Meeting goals: discuss the figures and review scripts
+- Looked at Kruskal-Wallis --> 2 groups to look at human vs mice
+- Looking at our bar graph: evident difference between human and mice
+- For alpha diversity: not completed yet
+- For Beta diversiy: have completed
+- PIE CRUST and Indicator Test to be done
+- Functional analysis to be done
+- Differential abundance to be done
+- After filtering, we eneded up having 5 and 5 for the 2 human groups, but did not change the mice data
+- Can look at sex in human data and in mouse data
+- Can make 2 more metadata category: RS type & Sex
 
