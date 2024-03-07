@@ -16,8 +16,8 @@ library(readxl)
 ```
 
 ```{r}
-human_metadata_raw <- read_xlsx("data/10_metadata-and-manifest/original_files/original_human_metadata.xlsx")
-mouse_metadata_raw <- read.delim("data/10_metadata-and-manifest/original_files/original_mouse_metadata.tsv")
+human_metadata_raw <- read_xlsx("../10_metadata-and-manifest/original_files/original_human_metadata.xlsx")
+mouse_metadata_raw <- read.delim("../10_metadata-and-manifest/original_files/original_mouse_metadata.tsv")
 ```
 
 ### filtering
@@ -26,7 +26,7 @@ We will keep only the data from timepoint 2 which corresponds to the first treat
 ```{r}
 human_metadata <- human_metadata_raw %>% 
 									filter(timepoint == 2) %>%
-									select("#SampleID",host_subject_id, timepoint, trt) %>%
+									select("#SampleID",host_subject_id, timepoint, trt, gender) %>%
 									rename(`sample-id` = "#SampleID")
 ```
 
@@ -34,7 +34,12 @@ We will remove the positive control INU samples because they're not a resistant 
 ```{r}
 mouse_metadata <- mouse_metadata_raw %>% 
 									filter(Treatment != "INU") %>%
-									mutate(trt = ifelse(Treatment == "CTL", "C", "RS")) %>%
+									# add treatment type column to match the human dataset
+									mutate(trt = ifelse(Treatment == "CTL", "C", "RS"),
+									# add gender column
+												 gender = ifelse(str_detect(sample.id,"F"), "F", "M")
+												 ) %>%
+									# rename for QIIME
 									rename(`sample-id` = sample.id)
 ```
 
@@ -59,17 +64,17 @@ metadata <- full_join(human_metadata, mouse_metadata) %>%
 ### export
 
 ```{r}
-write_tsv(human_metadata, "data/10_metadata-and-manifest/human_metadata.tsv")
-write_tsv(mouse_metadata, "data/10_metadata-and-manifest/mouse_metadata.tsv")
-write_tsv(metadata, "data/10_metadata-and-manifest/metadata.tsv")
+write_tsv(human_metadata, "../10_metadata-and-manifest/human_metadata.tsv")
+write_tsv(mouse_metadata, "../10_metadata-and-manifest/mouse_metadata.tsv")
+write_tsv(metadata, "../10_metadata-and-manifest/metadata.tsv")
 ```
 
 ## Manifest`
 
 Import old manifest files:
 ```{r}
-mouse_manifest_old <- read.delim("data/10_metadata-and-manifest/original_files/original_mouse_manifest.tsv")
-human_manifest_old <- read.delim("data/10_metadata-and-manifest/original_files/original_human_manifest.txt")
+mouse_manifest_old <- read.delim("../10_metadata-and-manifest/original_files/original_mouse_manifest.tsv")
+human_manifest_old <- read.delim("../10_metadata-and-manifest/original_files/original_human_manifest.txt")
 ```
 
 Filter manifest table to only include samples in metadata files:
@@ -85,6 +90,6 @@ mouse_manifest$absolute.filepath <- str_remove_all(mouse_manifest$absolute.filep
 
 Export new manifest files:
 ```{r}
-write_tsv(mouse_manifest, "data/10_metadata-and-manifest/mouse_manifest.tsv")
-write_tsv(human_manifest, "data/10_metadata-and-manifest/human_manifest.tsv")
+write_tsv(mouse_manifest, "../10_metadata-and-manifest/mouse_manifest.tsv")
+write_tsv(human_manifest, "../10_metadata-and-manifest/human_manifest.tsv")
 ```
