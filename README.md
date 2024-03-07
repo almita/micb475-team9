@@ -99,4 +99,11 @@
  
 - work on aims 3 and 4 for next week
 
-   
+### Meeting 5 - 29/Feb/2024
+#### Progress/Agenda
+- processed human and mouse files individually through Qiime for core metrics
+- generated diversity plots and statistical analysis 
+
+#### Agenda
+- look over progress (qiime core metrics and diversity plots and statisical analysis)
+
