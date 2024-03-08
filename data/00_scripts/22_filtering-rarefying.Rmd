@@ -67,7 +67,7 @@ starch_df <- dephyloseq(starch_taxa)
 
 ```{r}
 df <- starch_df %>%
-	select(c(Row.names, group, sample_sums)) %>%
+	select(c(Row.names, group, sample_sums, gender)) %>%
 	rename(`sample-id` = Row.names) %>%
 	distinct()
 ```
@@ -85,7 +85,7 @@ df$color <- if_else(df$sample_sums>=depth, "keep", "discard")
 df %>% ggplot(aes(as.character(`sample-id`), as.numeric(sample_sums))) + 
 	geom_col(aes(fill = color)) + 
 	geom_hline(aes(yintercept = depth)) +
-	facet_wrap(.~group,
+	facet_wrap(.~gender,
 						 scales = "free")
 ```
 
