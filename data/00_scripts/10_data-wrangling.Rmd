@@ -27,7 +27,8 @@ We will keep only the data from timepoint 2 which corresponds to the first treat
 human_metadata <- human_metadata_raw %>% 
 									filter(timepoint == 2) %>%
 									select("#SampleID",host_subject_id, timepoint, trt, gender) %>%
-									rename(`sample-id` = "#SampleID")
+									rename(`sample-id` = "#SampleID") %>%
+									mutate(RS = "RS2")
 ```
 
 We will remove the positive control INU samples because they're not a resistant starch treatment and can't be compared between the datasets. 
@@ -37,7 +38,9 @@ mouse_metadata <- mouse_metadata_raw %>%
 									# add treatment type column to match the human dataset
 									mutate(trt = ifelse(Treatment == "CTL", "C", "RS"),
 									# add gender column
-												 gender = ifelse(str_detect(sample.id,"F"), "F", "M")
+												 gender = ifelse(str_detect(sample.id,"F"), "F", "M"),
+									# add RS column based on starch source
+												 RS = str_extract(sample.id, "RS\\d")
 												 ) %>%
 									# rename for QIIME
 									rename(`sample-id` = sample.id)
