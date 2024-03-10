@@ -1,0 +1,264 @@
+---
+title: "50_differential-abundance-analysis"
+output: html_document
+date: "2024-03-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Differential Abundance Analysis
+Import libraries and data
+```{r}
+library(tidyverse)
+library(phyloseq)
+library(DESeq2)
+```
+
+```{r}
+starch <- read_rds("starch_filtered_phyloseq.RDS")
+stach_plus1 <- transform_sample_counts(starch, function(x) x+1)
+starch_deseq <- phyloseq_to_deseq2(stach_plus1, ~`group`)
+starch_DESEQ <- DESeq(starch_deseq)
+```
+## Human Control versus Human Starch Resistance
+
+```{r}
+res_human <- results(starch_DESEQ, tidy=TRUE,
+               contrast = c("group", "human-C", "human-RS"))
+```
+
+```{r}
+res_human %>% mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_human <- res_human %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_human_vec <- sigASVs_human %>%
+  pull(ASV)
+
+human_filt <- prune_taxa(sigASVs_human_vec, starch)
+
+merged_results_human <- tax_table(human_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_human) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_human) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+
+```
+
+
+## Human Control versus Mouse Control
+
+```{r}
+res_humanC_mouseC <- results(starch_DESEQ, tidy=TRUE,
+                contrast = c("group", "human-C", "mouse-C"))
+
+```
+
+```{r}
+res_humanC_mouseC %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_humanC_mouseC <- res_humanC_mouseC %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_humanC_mouseC_vec <- sigASVs_humanC_mouseC %>%
+  pull(ASV)
+
+humanC_mouseC_filt <- prune_taxa(sigASVs_humanC_mouseC_vec, starch)
+
+merged_results_humanC_mouseC <- tax_table(humanC_mouseC_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_humanC_mouseC) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_humanC_mouseC) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+```
+
+## Human Control versus Mouse Resistant Starch
+
+```{r}
+res_humanC_mouseRS <- results(starch_DESEQ, tidy=TRUE,
+                           contrast = c("group", "human-C", "mouse-RS"))
+
+
+```
+
+```{r}
+res_humanC_mouseRS %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_humanC_mouseRS <- res_humanC_mouseRS %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_humanC_mouseRS_vec <- sigASVs_humanC_mouseRS %>%
+  pull(ASV)
+
+humanC_mouseRS_filt <- prune_taxa(sigASVs_humanC_mouseRS_vec, starch)
+
+merged_results_humanC_mouseRS <- tax_table(humanC_mouseRS_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_humanC_mouseRS) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_humanC_mouseRS) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+```
+
+
+## Mouse Control versus Mouse Resistant Starch
+
+```{r}
+res_mouse <- results(starch_DESEQ, tidy=TRUE,
+                           contrast = c("group", "mouse-C", "mouse-RS"))
+
+```
+
+```{r}
+res_mouse %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_mouse <- res_mouse %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_mouse_vec <- sigASVs_mouse %>%
+  pull(ASV)
+
+mouse_filt <- prune_taxa(sigASVs_mouse_vec,starch)
+
+merged_results_mouse <- tax_table(mouse_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_mouse) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_mouse) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+```
+
+
+## Mouse Control versus Human Resistant Starch
+
+```{r}
+res_mouseC_humanRS <- results(starch_DESEQ, tidy=TRUE,
+                     contrast = c("group", "mouse-C", "human-RS"))
+```
+
+```{r}
+res_mouseC_humanRS %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_mouseC_humanRS <- res_mouseC_humanRS %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_mouseC_humanRS_vec <- sigASVs_mouseC_humanRS %>%
+  pull(ASV)
+
+mouseC_humanRS_filt <- prune_taxa(sigASVs_mouseC_humanRS_vec,starch)
+
+merged_results_mouseC_humanRS <- tax_table(mouseC_humanRS_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_mouseC_humanRS) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_mouseC_humanRS) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+```
+
+
+## Human Resistant Starch versus Mouse Resistant Starch
+
+```{r}
+res_humanRS_mouseRS <- results(starch_DESEQ, tidy=TRUE,
+                               contrast = c("group", "human-RS", "mouse-RS"))
+```
+
+```{r}
+res_humanRS_mouseRS %>%
+  mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
+  ggplot() +
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+```
+
+```{r}
+sigASVs_humanRS_mouseRS <- res_humanRS_mouseRS %>% 
+  filter(padj<0.01 & abs(log2FoldChange)>2) %>%
+  dplyr::rename(ASV=row)
+
+sigASVs_humanRS_mouseRS_vec <- sigASVs_humanRS_mouseRS %>%
+  pull(ASV)
+
+humanRS_mouseRS_filt <- prune_taxa(sigASVs_humanRS_mouseRS_vec,starch)
+
+merged_results_humanRS_mouseRS <- tax_table(humanRS_mouseRS_filt) %>% as.data.frame() %>%
+  rownames_to_column(var="ASV") %>%
+  right_join(sigASVs_humanRS_mouseRS) %>%
+  arrange(log2FoldChange) %>%
+  mutate(Genus = make.unique(Genus)) %>%
+  mutate(Genus = factor(Genus, levels=unique(Genus)))
+```
+
+```{r}
+ggplot(merged_results_humanRS_mouseRS) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+  geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+```
