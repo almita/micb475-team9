@@ -3,6 +3,7 @@
 #Load packages and import data:
 library(phyloseq)
 library(indicspecies)
+library(tidyverse)
 
 starch_filtered <- readRDS("starch_filtered_phyloseq.RDS")
 
