@@ -24,7 +24,8 @@ human_RS_core <- core_members(human_RS_phyloseq,detection=0, prevalence=0.8)
 
 #Venn diagrams
 ##mouse-C vs mouse-RS
-mouse_groups_comparison <- ggVennDiagram(x =list(mouse_control_core, mouse_RS_core), set_labels = c("Mouse Control Group", "Mouse RS Group"))
+mouse_groups_comparison <- ggVennDiagram(x =list(mouse_control_core, mouse_RS_core), set_labels(mouse_groups_comparison, label_list = c("Mouse Control", "Mouse RS"))
+)
 mouse_groups_comparison
 ##human-C vs human-RS
 human_groups_comparison <- ggVennDiagram(x =list(human_control_core, human_RS_core))
