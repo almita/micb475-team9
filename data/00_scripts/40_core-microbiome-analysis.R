@@ -4,6 +4,7 @@
 library(phyloseq)
 library(microbiome)
 library(ggVennDiagram)
+library(ggplot2)
 
 starch_filtered <- readRDS("starch_filtered_phyloseq.RDS")
 
@@ -24,20 +25,22 @@ human_RS_core <- core_members(human_RS_phyloseq,detection=0, prevalence=0.8)
 
 #Venn diagrams
 ##mouse-C vs mouse-RS
-mouse_groups_comparison <- ggVennDiagram(x =list(mouse_control_core, mouse_RS_core), set_labels(mouse_groups_comparison, label_list = c("Mouse Control", "Mouse RS"))
-)
-mouse_groups_comparison <- set_labels(ggVennDiagram(x = list(mouse_control_core, mouse_RS_core)), label_list = c("Mouse Control", "Mouse RS"))                                                     
+mouse_groups_comparison <- ggVennDiagram(x =list(mouse_control_core, mouse_RS_core), 
+                                         category.names = c("Mouse-C","Mouse-RS"), set_size = 4) + scale_x_continuous(expand = expansion(mult = .2)) + scale_fill_distiller(palette = "Purples", direction = 1)
 mouse_groups_comparison
-                                                     
 ##human-C vs human-RS
-human_groups_comparison <- ggVennDiagram(x =list(human_control_core, human_RS_core))
+human_groups_comparison <- ggVennDiagram(x =list(human_control_core, human_RS_core),
+                                         category.names = c("Human-C","Human-RS"), set_size = 4) + scale_x_continuous(expand = expansion(mult = .2)) + scale_fill_distiller(palette = "Purples", direction = 1)
 human_groups_comparison
 ##mouse-C vs human-C
-control_cohort_comparison <- ggVennDiagram(x = list(mouse_control_core, human_control_core))
+control_cohort_comparison <- ggVennDiagram(x = list(mouse_control_core, human_control_core),
+                                           category.names = c("Mouse-C","Human-C"), set_size = 4) + scale_x_continuous(expand = expansion(mult = .2)) + scale_fill_distiller(palette = "Purples", direction = 1)
 control_cohort_comparison
 ##mouse-RS vs human-RS
-RS_cohort_comparison <- ggVennDiagram(x= list(mouse_RS_core, human_RS_core))
+RS_cohort_comparison <- ggVennDiagram(x= list(mouse_RS_core, human_RS_core), 
+                                      category.names = c("Mouse-RS","Human-RS"), set_size = 4) + scale_x_continuous(expand = expansion(mult = .2)) + scale_fill_distiller(palette = "Purples", direction = 1)
 RS_cohort_comparison
 ##4 way comparison
-complete_digaram <- ggVennDiagram(x = list(mouse_control_core, human_control_core, mouse_RS_core, human_RS_core))
+complete_digaram <- ggVennDiagram(x = list(mouse_control_core, human_control_core, mouse_RS_core, human_RS_core),
+                                  category.names = c("Mouse-C","Human-C", "Mouse-RS", "Human-RS"), set_size = 4, label_alpha = 0) + scale_x_continuous(expand = expansion(mult = .2)) + scale_fill_distiller(palette = "Purples", direction = 1)
 complete_digaram
