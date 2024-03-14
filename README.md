@@ -115,10 +115,21 @@
 - Looking at our bar graph: evident difference between human and mice
 - For alpha diversity: not completed yet
 - For Beta diversiy: have completed
-- PIE CRUST and Indicator Test to be done
+- PiCRUST and Indicator Test to be done
 - Functional analysis to be done
 - Differential abundance to be done
 - After filtering, we eneded up having 5 and 5 for the 2 human groups, but did not change the mice data
 - Can look at sex in human data and in mouse data
 - Can make 2 more metadata category: RS type & Sex
+
+
+### Meeting 7 - 14/Mar/2024
+#### Agenda
+- discuss timepoint 4 of the human paper and see if it should be included to boost number of samples
+- go over core microbiome, indicator taxa, differential abundance
+
+### Notes
+- PERMANOVA - use beta-diversity and look for statistical significance
+- can incease sample size of human data by considering timepoint 4
+- 
 
