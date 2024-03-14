@@ -126,10 +126,14 @@
 ### Meeting 7 - 14/Mar/2024
 #### Agenda
 - discuss timepoint 4 of the human paper and see if it should be included to boost number of samples
-- go over core microbiome, indicator taxa, differential abundance
+- go over core microbiome, indicator taxa, differential abundance analyses
 
 ### Notes
 - PERMANOVA - use beta-diversity and look for statistical significance
 - can incease sample size of human data by considering timepoint 4
-- 
+- differential abundance:
+- 	Bacteriodes genus had multiple bars on the bar plots (1,2,3,4)
+- 	volcano plot - annotate more by labelling the significant plots with genus
+- 	shows significance, which is good
+- redo metadata, qiime processing, and other analyses with the additional human samples for next week
 
