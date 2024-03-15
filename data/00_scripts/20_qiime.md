@@ -252,6 +252,13 @@ qiime taxa filter-table \
   --p-exclude mitochondria,chloroplast \
   --o-filtered-table merged_table-no-mitochondria-no-chloroplast.qza
 ```
+```bash
+qiime taxa filter-table \
+  --i-table merged_table.qza \
+  --i-taxonomy taxonomy.qza \
+  --p-exclude mitochondria,chloroplast,Unassigned \
+  --o-filtered-table merged_table-no-mitochondria-no-chloroplast-no-unassigned.qza
+```
 
 Human 
 
@@ -281,7 +288,12 @@ qiime feature-table summarize \
   --o-visualization merged_table-no-mitochondria-no-chloroplast.qzv \
   --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
-
+```bash
+qiime feature-table summarize \
+  --i-table merged_table-no-mitochondria-no-chloroplast-no-unassigned.qza \
+  --o-visualization merged_table-no-mitochondria-no-chloroplast-no-unassigned.qzv \
+  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
+```
 Human
 
 ```bash
