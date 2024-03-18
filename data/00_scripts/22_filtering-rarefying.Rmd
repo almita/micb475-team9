@@ -18,19 +18,46 @@ starch_unfiltered <- readRDS("../21_phyloseq/starch_unfiltered_phyloseq.RDS")
 ```
 
 ## Filtering
-Removing off-target taxa
+Removing low read count samples:
 ```{r}
-starch_taxa <- subset_taxa(starch_unfiltered, 
-													 Domain == c("Bacteria", "Archaea"))
+sort(sample_sums(starch_unfiltered))
 ```
+
+```{r}
+# add total number of reads
+starch_unfiltered@sam_data$sample_sums <- as.numeric(sample_sums(starch_unfiltered))
+
+# prune by sample_sums
+starch_high <- prune_samples(sample_sums(starch_unfiltered) >= 300, starch_unfiltered)
+```
+
 
 Save filtered non-rarefied phyloseq
 ```{r}
-write_rds(starch_taxa, "../21_phyloseq/starch_filtered_phyloseq.RDS")
+write_rds(starch_high, "../21_phyloseq/starch_filtered_phyloseq.RDS")
 ```
 
 
 ## Rarefying
+```{r}
+depth <- 6747
+```
+
+```{r}
+otu_matrix <- as.matrix(as.data.frame(otu_table(starch_high)))
+rare <- rarecurve(as.matrix(otu_matrix), step=500, label = FALSE, tidy = TRUE)
+```
+
+```{r}
+rare %>%
+	ggplot(aes(x = Sample, y = Species, group = Site)) +
+	geom_line() +
+	geom_vline(xintercept = depth, color = "red") +
+	scale_x_continuous(labels = scales::comma) +
+	coord_cartesian(xlim=c(0,10000)) +
+	theme_bw() +
+	theme(legend.position = "none") 
+```
 
 ```{r}
 dephyloseq <- function(phylo_obj){ 
@@ -56,13 +83,9 @@ output = mot
 }
 ```
 
-```{r}
-starch_taxa@sam_data$sample_sums <- as.numeric(sample_sums(starch_taxa))
-```
-
 
 ```{r}
-starch_df <- dephyloseq(starch_taxa)
+starch_df <- dephyloseq(starch_high)
 ```
 
 ```{r}
@@ -73,10 +96,6 @@ df <- starch_df %>%
 ```
 
 ```{r}
-depth <- 4316
-```
-
-```{r}
 df$sample_sums <- as.numeric(df$sample_sums)
 df$color <- if_else(df$sample_sums>=depth, "keep", "discard")
 ```
@@ -84,9 +103,17 @@ df$color <- if_else(df$sample_sums>=depth, "keep", "discard")
 ```{r}
 df %>% ggplot(aes(as.character(`sample-id`), as.numeric(sample_sums))) + 
 	geom_col(aes(fill = color)) + 
-	geom_hline(aes(yintercept = depth)) +
-	facet_wrap(.~gender,
-						 scales = "free")
+	geom_hline(aes(yintercept = depth), color = "red") +
+	facet_wrap(.~group,
+						 scales = "free") +
+	scale_fill_manual(values = c("grey", "black")) +
+	ylab("sample sums") +
+	theme_minimal() +
+	theme(
+		axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
 ```
 
 ```{r}

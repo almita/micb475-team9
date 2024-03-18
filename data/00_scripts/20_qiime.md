@@ -244,20 +244,13 @@ qiime metadata tabulate \
 
 taxonomy based filtering
 Merged
-
 ```bash
 qiime taxa filter-table \
   --i-table merged_table.qza \
   --i-taxonomy taxonomy.qza \
-  --p-exclude mitochondria,chloroplast \
-  --o-filtered-table merged_table-no-mitochondria-no-chloroplast.qza
-```
-```bash
-qiime taxa filter-table \
-  --i-table merged_table.qza \
-  --i-taxonomy taxonomy.qza \
-  --p-exclude mitochondria,chloroplast,Unassigned \
-  --o-filtered-table merged_table-no-mitochondria-no-chloroplast-no-unassigned.qza
+  --p-include p__ \
+  --p-exclude eukaryota,mitochondria,chloroplast,unassigned \
+  --o-filtered-table merged_table-filtered.qza
 ```
 
 Human 
@@ -281,16 +274,9 @@ qiime taxa filter-table \
 ```
 
 Visualization
-
 ```bash
 qiime feature-table summarize \
-  --i-table merged_table-no-mitochondria-no-chloroplast.qza \
-  --o-visualization merged_table-no-mitochondria-no-chloroplast.qzv \
-  --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
-```
-```bash
-qiime feature-table summarize \
-  --i-table merged_table-no-mitochondria-no-chloroplast-no-unassigned.qza \
+  --i-table merged_table-filtered.qza \
   --o-visualization merged_table-no-mitochondria-no-chloroplast-no-unassigned.qzv \
   --m-sample-metadata-file /home/qiime2/data/metadata/metadata.tsv
 ```
@@ -479,28 +465,16 @@ qiime diversity beta-group-significance \
   --p-pairwise
 ```
 
-
-## taxonomic classification
-
-Use the complete SILVA classifier, not the region specific ones.
-
-```bash
-qiime feature-classifier classify-sklearn \
-  --i-classifier silva-v4-classifier.qza \
-  --i-reads rep-seqs.qza \
-  --o-classification taxonomy.qza
-```
-
 ## exporting files
 
 Feature table:
 
 ```bash
 qiime tools export \
-    --input-path merged_table-no-mitochondria-no-chloroplast.qza \
+    --input-path merged_table-filtered.qza \
     --output-path exports/
 
-biom convert -i feature-table.biom --to-tsv -o feature-table.txt
+biom convert -i exports/feature-table.biom --to-tsv -o exports/feature-table.txt
 ```
 
 Taxonomy:
