@@ -16,6 +16,9 @@ library(phyloseq)
 library(ape)
 library(tidyverse)
 library(picante)
+library(ARTool)
+library(ggsignif)
+library(pairwiseAdonis)
 ```
 
 ```{r}
@@ -31,6 +34,7 @@ mouse <- subset_samples(starch, cohort == "mouse")
 ```{r}
 pal <- c("#DD4124FF", "#faa478", "#6ac1de", "#0269a1FF")
 pal2 <- c("#00346EFF", "#007CBFFF", "#06ABDFFF", "#EDD03EFF", "#F5A200FF", "#6D8600FF", "#424D0CFF")
+pal3 <- c("#FDAE61FF", "#ABDDA4FF")
 ```
 
 
@@ -56,7 +60,8 @@ data_evenness <- diversity(otu) / log(specnumber(otu))
 
 
 ### Shannon
-#### Kruskal-Wallis
+#### Statistical Analysis
+##### Merged
 ```{r}
 shannon_kw <- kruskal.test(Shannon ~ group, data = starch_rich)
 shannon_kw
@@ -66,23 +71,169 @@ if (shannon_kw$p.value < 0.05){
                        p.adjust = "bonferroni")
 }
 ```
-There is a significant difference (p-val < 0.05) in the Shannon index between  mouse-C & human-C, mouse-C & human-RS, and mouse-RS & human-RS.
+There is a significant difference (p-val < 0.05) in the Shannon index between: 
+- mouse-C & human-C
+- mouse-C & human-RS
+- mouse-RS & human-C
 
-- _I could also run tests to see the individual differences between cohort and treatments_
-
-#### Plot
 ```{r}
-starch_rich %>% ggplot(aes(group, Shannon)) +
-	geom_boxplot(aes(fill = group)) +
-	scale_fill_manual(values = pal) +
-	ylab("Shannon Index") +
-	xlab("Group") +
+shannon_kw <- kruskal.test(Shannon ~ gender, data = starch_rich)
+shannon_kw
+```
+Overall shows a significant difference in the Shannon index between genders.
+
+Trying to do a multivariate analysis but not working -> _F values of ANOVAs on aligned responses not of interest are not all ~0. ART may not be appropriate._
+
+```{r}
+(shan <- art(Shannon ~ factor(trt)*factor(cohort)*factor(gender) + (factor(trt)/factor(cohort)), data = starch_rich))
+anova(shan)
+```
+
+##### Mouse
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(Shannon ~ trt, data = .)
+```
+No significant difference in Shannon index between treatments.
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(Shannon ~ gender, data = .)
+```
+
+Significant difference in Shannon index between genders.
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(Shannon ~ starch_type, data = .)
+```
+No significant difference in Shannon index between starch types (?)
+
+##### Human
+```{r}
+starch_rich %>% 
+	filter(cohort == "human") %>%
+	kruskal.test(Shannon ~ gender, data = .)
+```
+Significant difference in Shannon index between genders. 
+
+#### Plots
+
+```{r}
+my_comparisons <- list(c("human-C", "human-RS"),
+											 c("mouse-C", "mouse-RS"),
+											 c("mouse-RS","human-RS"),
+											 c("mouse-C","human-C"))
+starch_comparisons <- list(c("CTL", "CKP"),
+													 c("CKP", "LEN")
+													 )
+```
+
+
+##### Merged
+
+```{r}
+w <- 2400
+h <- 2000
+```
+
+
+```{r}
+starch_rich %>%
+	ggboxplot(x = "group", y = "Shannon", color =  "group",
+						palette = pal) +
+	stat_compare_means(comparisons = my_comparisons, label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
+						palette = pal3) +
+	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
+						palette = pal3, facet.by = "group") +
+	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_facet.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
+
+##### Mouse
+```{r}
+starch_rich %>%
+	filter(cohort == "mouse") %>%
+	ggboxplot(x = "gender", y = "Shannon", color =  "trt",
+						palette = pal[3:4]) +
+	stat_compare_means(label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "mouse") %>%
+	ggboxplot(x = "starch_type", y = "Shannon", color =  "starch_type",
+						palette = pal2) +
+	stat_compare_means(comparisons = starch_comparisons, label = "p.signif") +
+	xlab("Starch Type") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 		legend.position = "none"
 	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
+Why does the plot show a significance value between starch types when the kruskal wallis test didn't.
+
+##### Human
+```{r}
+starch_rich %>%
+	filter(cohort == "human") %>%
+	ggboxplot(x = "gender", y = "Shannon", color =  "trt",
+						palette = pal) +
+	stat_compare_means(label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 ### Faith's Phylogenetic Diversity 
@@ -94,7 +245,8 @@ phylo_dist <- pd(t(otu_table(starch)), phy_tree(starch),
 starch_rich$PD <- phylo_dist$PD
 ```
 
-#### Kruskal-Wallis
+#### Statistical Analysis
+##### Group
 ```{r}
 pd_kw <- kruskal.test(PD ~ group, data = starch_rich)
 pd_kw
@@ -104,24 +256,76 @@ if (pd_kw$p.value < 0.05){
                        p.adjust = "bonferroni")
 }
 ```
-There is no significant difference in Faith's phylogenetic distance between the groups.
+**There is no significant difference in Faith's phylogenetic distance between the groups.**
 
-#### Plot
+##### Gender
+```{r}
+kruskal.test(PD ~ gender, data = starch_rich)
+```
+No difference between genders. 
+
+##### Mouse
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(PD ~ gender, data = .)
+```
+No difference between genders.
 
 ```{r}
-ggplot(sample_data(starch_rich), aes(group, PD)) + 
-	geom_boxplot(aes(fill = group)) +
-	scale_fill_manual(values = pal) +
-  xlab("Group") +
-  ylab("Phylogenetic Diversity") +
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(PD ~ starch_type, data = .)
+```
+No difference between starch types. 
+
+##### Human
+```{r}
+starch_rich %>% 
+	filter(cohort == "human") %>%
+	kruskal.test(PD ~ gender, data = .)
+```
+No difference between genders. 
+
+#### Plots
+##### Merged
+```{r}
+starch_rich %>%
+	ggboxplot(x = "group", y = "PD", color =  "group",
+						palette = pal) +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 		legend.position = "none"
 	)
-```
 
+ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "PD", color =  "gender",
+						palette = pal3) +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "PD", color =  "gender",
+						palette = pal3, facet.by = "group") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_gender_facet.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
 ## Beta Diversity
 ```{r}
 starchdf <- as.data.frame(sample_data(starch))
@@ -134,14 +338,14 @@ mousedf <- as.data.frame(sample_data(mouse))
 #### Merged
 ```{r}
 bc_dm <- distance(starch, method="bray")
-adonis2(bc_dm ~ group, data = data.frame(starchdf))
+adonis2(bc_dm ~ trt*cohort*gender, data = data.frame(starchdf))
 ```
-There is a significant difference between groups.
+There is a significant difference between treatments, cohorts, genders, at least two trt:gender pair, and at least two cohort:gender pair.
 
 ```{r}
 pcoa_bc <- ordinate(starch, method="PCoA", distance=bc_dm)
+
 plot_ordination(starch, pcoa_bc, color = "group") +
-	stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -149,34 +353,71 @@ plot_ordination(starch, pcoa_bc, color = "group") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-	
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(starch, pcoa_bc, color = "gender") +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 #### Human
 ```{r}
 human_bc_dm <- distance(human, method="bray")
-adonis2(human_bc_dm ~ trt, data = data.frame(humandf))
+adonis2(human_bc_dm ~ trt*gender, data = data.frame(humandf))
 ```
-There is no significant difference between treatments. 
+There is only a significant difference in community structure between genders. I should probably consider here the effect of `trtseq` (fixed effect) or individuals as random error....
 
 ```{r}
 human_pcoa_bc <- ordinate(human, method="PCoA", distance=human_bc_dm)
 
 plot_ordination(human, human_pcoa_bc, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
-	scale_color_manual(values = pal[1:2]) +
+	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(human, human_pcoa_bc, color = "gender") +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(human, human_pcoa_bc, color = "gender") +
+	scale_color_manual(values = pal3) +
+	facet_grid(.~trt) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender_facet_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 #### Mouse
 ```{r}
 mouse_bc_dm <- distance(mouse, method="bray")
-adonis2(mouse_bc_dm ~ trt+starch_type, data = data.frame(mousedf))
-pw <- pairwiseAdonis::pairwise.adonis2(mouse_bc_dm ~ starch_type, data = data.frame(mousedf))
+adonis2(mouse_bc_dm ~ trt*starch_type*gender, data = data.frame(mousedf))
+pw <- pairwiseAdonis::pairwise.adonis2(mouse_bc_dm ~ trt*starch_type*gender, 
+																			 data = data.frame(mousedf))
 
 print("significantly different pairs: ")
 for (i in range(2,(length(pw)))){
@@ -186,13 +427,13 @@ for (i in range(2,(length(pw)))){
 	}
 }
 ```
-There is no significant difference between treatments but there is at least two starch types with significantly different beta-diversities.  There are PTB-BEP and CKP-CTL (CTL is control). 
+There is a significant difference in community structure between treatments, at least 2 starch types, genders, at least two trt:gender pairs, and at least two starch_type:gender pairs. 
 
 ```{r}
 mouse_pcoa_bc <- ordinate(mouse, method="PCoA", distance=mouse_bc_dm)
 
 plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -201,8 +442,10 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
 		panel.grid.minor = element_blank(),
 	)
 
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
 plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
 	theme_bw() +
@@ -210,21 +453,34 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
-```
 
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(mouse, mouse_pcoa_bc, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Starch Type") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
 ### Jaccard
 #### Merged
 ```{r}
 jc_dm <- distance(starch, method = "jaccard", binary = TRUE)
-adonis2(jc_dm ~ group, data = data.frame(starchdf))
+adonis2(jc_dm ~ cohort*trt*gender, data = data.frame(starchdf))
 ```
-There is a significant difference in beta diversity between groups.
+There is a significant difference in community composition between cohorts, genders, and at least 2 cohort:gender pairs. 
 
 ```{r}
 pcoa_jc <- ordinate(starch, method="PCoA", distance=jc_dm)
 
 plot_ordination(starch, pcoa_jc, color = "group") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -232,34 +488,62 @@ plot_ordination(starch, pcoa_jc, color = "group") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(starch, pcoa_jc, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
 	
 ```
 
 #### Human
 ```{r}
 human_jc_dm <- distance(human, method = "jaccard", binary = TRUE)
-adonis2(human_jc_dm ~ trt, data = data.frame(humandf))
+adonis2(human_jc_dm ~ trt*gender, data = data.frame(humandf))
 ```
-Not significantly different.
+Community composition is not significantly different between treatments or gender.
 
 ```{r}
 human_pcoa_jc <- ordinate(human, method="PCoA", distance=human_jc_dm)
 
 plot_ordination(human, human_pcoa_jc, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
-	scale_color_manual(values = pal[1:2]) +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(human, human_pcoa_jc, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 #### Mouse
 ```{r}
 mouse_jc_dm <- distance(mouse, method = "jaccard", binary = TRUE)
-adonis2(mouse_jc_dm ~ trt+starch_type, data = data.frame(mousedf))
+adonis2(mouse_jc_dm ~ gender*trt*starch_type, data = data.frame(mousedf))
 pw <- pairwiseAdonis::pairwise.adonis2(mouse_jc_dm ~ starch_type, data = data.frame(mousedf))
 
 print("significantly different pairs: ")
@@ -270,13 +554,13 @@ for (i in range(2,(length(pw)))){
 	}
 }
 ```
-Beta diversity is significantly different between groups and between CKP-CTL. 
+Community composition is significantly different between genders, treatments, starch types, at least 2 gender:trt pairs and at least 2 gender:starch_type pairs. The significantly different starch_type groups are PTB-BEP and CKP-CTL. 
 
 ```{r}
 mouse_pcoa_jc <- ordinate(mouse, method="PCoA", distance=mouse_jc_dm)
 
 plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -285,8 +569,10 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
 		panel.grid.minor = element_blank(),
 	)
 
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
 plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
 	theme_bw() +
@@ -294,6 +580,20 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(mouse, mouse_pcoa_jc, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 ### Unweighted Unifrac
@@ -301,15 +601,15 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
 #### Merged
 ```{r}
 uu_dm <- distance(starch, method = "unifrac")
-adonis2(uu_dm ~ group, data = data.frame(starchdf))
+adonis2(uu_dm ~ cohort*trt*gender, data = data.frame(starchdf))
 ```
-
+There is a significant difference in community composition and phylogeny between cohorts, genders and at least 2 group:gender pairs.
 
 ```{r}
 pcoa_uu <- ordinate(starch, method="PCoA", distance=uu_dm)
 
 plot_ordination(starch, pcoa_uu, color = "group") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -317,51 +617,70 @@ plot_ordination(starch, pcoa_uu, color = "group") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(starch, pcoa_uu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
 	
 ```
 
 #### Human
 ```{r}
 human_uu_dm <- distance(human, method = "unifrac")
-adonis2(human_uu_dm ~ trt, data = data.frame(humandf))
+adonis2(human_uu_dm ~ trt*gender, data = data.frame(humandf), permutations = 9999)
 ```
-Not significantly different.
+There is a significant difference in community composition and phylogeny between genders. 
 
 ```{r}
 human_pcoa_uu <- ordinate(human, method="PCoA", distance=human_uu_dm)
 
 plot_ordination(human, human_pcoa_uu, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
-	scale_color_manual(values = pal[1:2]) +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(human, human_pcoa_uu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 #### Mouse
 ```{r}
 mouse_uu_dm <- distance(mouse, method = "unifrac")
-adonis2(mouse_uu_dm ~ trt+starch_type, data = data.frame(mousedf))
-pw <- pairwiseAdonis::pairwise.adonis2(mouse_uu_dm ~ starch_type, data = data.frame(mousedf))
-
-print("significantly different pairs: ")
-for (i in range(2,(length(pw)))){
-	pair <- pw[[i]]
-	if (pair$`Pr(>F)`[1] < 0.05) {
-		print(names(pw)[i])
-	}
-}
+adonis2(mouse_uu_dm ~ trt*gender*starch_type, data = data.frame(mousedf))
 ```
-No significant difference between treatments but there is a difference between CKP-CTL. 
+There no significant difference in community composition and phylogeny between treatments but there is a difference between genders and at least 2 gender:starch_type pairs. 
 
 ```{r}
 mouse_pcoa_uu <- ordinate(mouse, method="PCoA", distance=mouse_uu_dm)
 
 plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -370,8 +689,10 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
 		panel.grid.minor = element_blank(),
 	)
 
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
 plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
 	theme_bw() +
@@ -379,21 +700,37 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(mouse, mouse_pcoa_uu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/uu_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
+there's an interesting clustering, but we'd need more metadata to see what is causing this difference. 
 
 ### Weighted Unifrac
 #### Merged
 ```{r}
 wu_dm <- distance(starch, method = "wunifrac")
-adonis2(wu_dm ~ group, data = data.frame(starchdf))
+adonis2(wu_dm ~ cohort*trt*gender, data = data.frame(starchdf), permutations = 9999)
+adonis2(wu_dm ~ group*gender, data = data.frame(starchdf), permutations = 9999)
 ```
-Significant difference between groups. 
+Significant difference in community structure and phylogeny between cohorts, genders and at least 2 trt:gender pairs.  
 
 ```{r}
 pcoa_wu <- ordinate(starch, method="PCoA", distance=wu_dm)
 
 plot_ordination(starch, pcoa_wu, color = "group") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
 	theme_bw() +
@@ -401,21 +738,35 @@ plot_ordination(starch, pcoa_wu, color = "group") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(starch, pcoa_wu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
 	
 ```
 
 #### Human
 ```{r}
 human_wu_dm <- distance(human, method = "wunifrac")
-adonis2(human_wu_dm ~ trt, data = data.frame(humandf))
+adonis2(human_wu_dm ~ trt*gender, data = data.frame(humandf), permutations = 9999)
 ```
-
+There is no significant difference in community structure and phylogeny between treatments, genders or the interaction between them. 
 
 ```{r}
 human_pcoa_wu <- ordinate(human, method="PCoA", distance=human_wu_dm)
 
 plot_ordination(human, human_pcoa_wu, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -423,12 +774,26 @@ plot_ordination(human, human_pcoa_wu, color = "trt") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(human, human_pcoa_wu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
 #### Mouse
 ```{r}
 mouse_wu_dm <- distance(mouse, method = "wunifrac")
-adonis2(mouse_wu_dm ~ trt+starch_type, data = data.frame(mousedf))
+adonis2(mouse_wu_dm ~ trt*gender*starch_type, data = data.frame(mousedf))
 pw <- pairwiseAdonis::pairwise.adonis2(mouse_wu_dm ~ starch_type, data = data.frame(mousedf))
 
 print("significantly different pairs: ")
@@ -439,13 +804,13 @@ for (i in range(2,(length(pw)))){
 	}
 }
 ```
-
+There is a significant difference in community structure and phylogeny between treatments, genders, at least 2 starch types, at least 2 trt:gender pairs, and at least 2 gender:starch_type pairs. The significantly different starch type pairs are: PTB-BEP and CKP-CTL. 
 
 ```{r}
 mouse_pcoa_wu <- ordinate(mouse, method="PCoA", distance=mouse_wu_dm)
 
 plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
 	theme_bw() +
@@ -454,8 +819,10 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
 		panel.grid.minor = element_blank(),
 	)
 
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
 plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
-	stat_ellipse(alpha = 0.5) +
+	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
 	theme_bw() +
@@ -463,4 +830,18 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
 	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+plot_ordination(mouse, mouse_pcoa_wu, color = "gender") +
+	#stat_ellipse(alpha = 0.5) +
+	scale_color_manual(values = pal3) +
+  labs(col = "Gender") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+	)
+
+ggsave("../30_diversity-analysis/plots/beta-diversity/wu_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
