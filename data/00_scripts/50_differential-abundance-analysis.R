@@ -15,33 +15,33 @@ starch_DESEQ <- DESeq(starch_deseq)
 
 #comparison between human control and human resistant starch
 res_human <- results(starch_DESEQ, tidy=TRUE,
-               contrast = c("group", "human-C", "human-RS"))
+               contrast = c("group", "human-RS", "human-C"))
 
 
 #comparison between human control and mouse control
 res_humanC_mouseC <- results(starch_DESEQ, tidy=TRUE,
-                contrast = c("group", "human-C", "mouse-C"))
+                contrast = c("group", "mouse-C", "human-C"))
 
 
 #comparison between human control and mouse resistant starch
 res_humanC_mouseRS <- results(starch_DESEQ, tidy=TRUE,
-                           contrast = c("group", "human-C", "mouse-RS"))
+                           contrast = c("group", "mouse-RS", "human-C"))
 
 
 #comparison between mouse control and mouse resistant starch
 res_mouse <- results(starch_DESEQ, tidy=TRUE,
-                           contrast = c("group", "mouse-C", "mouse-RS"))
+                           contrast = c("group", "mouse-RS", "mouse-C"))
 
 
 #comparison between mouse control and human resistant starch
 res_mouseC_humanRS <- results(starch_DESEQ, tidy=TRUE,
-                     contrast = c("group", "mouse-C", "human-RS"))
+                     contrast = c("group", "human-RS", "mouse-C"))
 
 
 
 #comparison between human resistant starch and mouse resistant starch
 res_humanRS_mouseRS <- results(starch_DESEQ, tidy=TRUE,
-                               contrast = c("group", "human-RS", "mouse-RS"))
+                               contrast = c("group", "mouse-RS", "human-RS"))
 
 ## Volcano plot: effect size VS significance
 
@@ -198,48 +198,69 @@ merged_results_humanRS_mouseRS <- tax_table(humanRS_mouseRS_filt) %>% as.data.fr
 
 
 # Make DESeq plot
-bar_plot_human <- ggplot(merged_results_human) +
-  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+merged_results_human_omit_na <- merged_results_human %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+bar_plot_human <- ggplot(merged_results_human_omit_na) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity", na.rm = TRUE)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+  
 
 ggsave("bar_plot_human.png", bar_plot_human)
 
+merged_results_humanC_mouseC_omit_na <- merged_results_humanC_mouseC %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
 
-bar_plot_humanC_mouseC <- ggplot(merged_results_humanC_mouseC) +
+bar_plot_humanC_mouseC <- ggplot(merged_results_humanC_mouseC_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
-ggsave("bar_plot_humanC_mouseC.png", bar_plot_humanC_mouseC, width = 20)
+ggsave("bar_plot_humanC_mouseC.png", bar_plot_humanC_mouseC, width = 30)
 
+merged_results_humanC_mouseRS_omit_na <- merged_results_humanC_mouseRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
 
-bar_plot_humanC_mouseRS <- ggplot(merged_results_humanC_mouseRS) +
+bar_plot_humanC_mouseRS <- ggplot(merged_results_humanC_mouseRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
-ggsave("bar_plot_humanC_mouseRS.png", bar_plot_humanC_mouseRS, width = 20)
+ggsave("bar_plot_humanC_mouseRS.png", bar_plot_humanC_mouseRS, width = 30)
 
+merged_results_mouse_omit_na <- merged_results_mouse %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
 
-bar_plot_mouse <- ggplot(merged_results_mouse) +
+bar_plot_mouse <- ggplot(merged_results_mouse_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
 ggsave("bar_plot_mouse.png", bar_plot_mouse)
 
+merged_results_mouseC_humanRS_omit_na <- merged_results_mouseC_humanRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
 
-bar_plot_mouseC_humanRS <- ggplot(merged_results_mouseC_humanRS) +
+bar_plot_mouseC_humanRS <- ggplot(merged_results_mouseC_humanRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
-ggsave("bar_plot_mouseC_humanRS.png", bar_plot_mouseC_humanRS, width = 20)
+ggsave("bar_plot_mouseC_humanRS.png", bar_plot_mouseC_humanRS, width = 30)
 
-bar_plot_humanRS_mouseRS <- ggplot(merged_results_humanRS_mouseRS) +
+merged_results_humanRS_mouseRS_omit_na <- merged_results_humanRS_mouseRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+bar_plot_humanRS_mouseRS <- ggplot(merged_results_humanRS_mouseRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
-ggsave("bar_plot_humanRS_mouseRS.png", bar_plot_humanRS_mouseRS, width = 20)
+ggsave("bar_plot_humanRS_mouseRS.png", bar_plot_humanRS_mouseRS, width = 30)
