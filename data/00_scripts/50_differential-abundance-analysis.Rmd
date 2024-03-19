@@ -25,7 +25,7 @@ starch_DESEQ <- DESeq(starch_deseq)
 
 ```{r}
 res_human <- results(starch_DESEQ, tidy=TRUE,
-               contrast = c("group", "human-C", "human-RS"))
+               contrast = c("group", "human-RS", "human-C"))
 ```
 
 ```{r}
@@ -65,7 +65,7 @@ ggplot(merged_results_human) +
 
 ```{r}
 res_humanC_mouseC <- results(starch_DESEQ, tidy=TRUE,
-                contrast = c("group", "human-C", "mouse-C"))
+                contrast = c("group", "mouse-C", "human-C"))
 
 ```
 
@@ -105,7 +105,7 @@ ggplot(merged_results_humanC_mouseC) +
 
 ```{r}
 res_humanC_mouseRS <- results(starch_DESEQ, tidy=TRUE,
-                           contrast = c("group", "human-C", "mouse-RS"))
+                           contrast = c("group", "mouse-RS", "human-C"))
 
 
 ```
@@ -147,7 +147,7 @@ ggplot(merged_results_humanC_mouseRS) +
 
 ```{r}
 res_mouse <- results(starch_DESEQ, tidy=TRUE,
-                           contrast = c("group", "mouse-C", "mouse-RS"))
+                           contrast = c("group", "mouse-RS", "mouse-C"))
 
 ```
 
@@ -188,7 +188,7 @@ ggplot(merged_results_mouse) +
 
 ```{r}
 res_mouseC_humanRS <- results(starch_DESEQ, tidy=TRUE,
-                     contrast = c("group", "mouse-C", "human-RS"))
+                     contrast = c("group", "human-RS", "mouse-C"))
 ```
 
 ```{r}
@@ -228,7 +228,7 @@ ggplot(merged_results_mouseC_humanRS) +
 
 ```{r}
 res_humanRS_mouseRS <- results(starch_DESEQ, tidy=TRUE,
-                               contrast = c("group", "human-RS", "mouse-RS"))
+                               contrast = c("group", "mouse-RS", "human-RS"))
 ```
 
 ```{r}
