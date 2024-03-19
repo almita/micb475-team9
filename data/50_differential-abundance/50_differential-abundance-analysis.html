@@ -558,13 +558,11 @@ merged_results_human &lt;- tax_table(human_filt) %&gt;% as.data.frame() %&gt;%
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_human) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_human_omit_na &lt;- merged_results_human %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_human_omit_na) +
+<pre class="r"><code>ggplot(merged_results_human) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;, na.rm = TRUE)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
@@ -594,13 +592,11 @@ merged_results_humanC_mouseC &lt;- tax_table(humanC_mouseC_filt) %&gt;% as.data.
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_humanC_mouseC) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_humanC_mouseC_omit_na &lt;- merged_results_humanC_mouseC %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_humanC_mouseC_omit_na) +
+<pre class="r"><code>ggplot(merged_results_humanC_mouseC) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
@@ -630,13 +626,11 @@ merged_results_humanC_mouseRS &lt;- tax_table(humanC_mouseRS_filt) %&gt;% as.dat
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_humanC_mouseRS) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_humanC_mouseRS_omit_na &lt;- merged_results_humanC_mouseRS %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_humanC_mouseRS_omit_na) +
+<pre class="r"><code>ggplot(merged_results_humanC_mouseRS) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
@@ -666,13 +660,11 @@ merged_results_mouse &lt;- tax_table(mouse_filt) %&gt;% as.data.frame() %&gt;%
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_mouse) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_mouse_omit_na &lt;- merged_results_mouse %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_mouse_omit_na) +
+<pre class="r"><code>ggplot(merged_results_mouse) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
@@ -702,13 +694,11 @@ merged_results_mouseC_humanRS &lt;- tax_table(mouseC_humanRS_filt) %&gt;% as.dat
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_mouseC_humanRS) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_mouseC_humanRS_omit_na &lt;- merged_results_mouseC_humanRS %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_mouseC_humanRS_omit_na) +
+<pre class="r"><code>ggplot(merged_results_mouseC_humanRS) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
@@ -738,13 +728,11 @@ merged_results_humanRS_mouseRS &lt;- tax_table(humanRS_mouseRS_filt) %&gt;% as.d
   rownames_to_column(var=&quot;ASV&quot;) %&gt;%
   right_join(sigASVs_humanRS_mouseRS) %&gt;%
   arrange(log2FoldChange) %&gt;%
+  drop_na(Genus) %&gt;%
   mutate(Genus = make.unique(Genus)) %&gt;%
   mutate(Genus = factor(Genus, levels=unique(Genus)))</code></pre>
 <pre><code>## Joining with `by = join_by(ASV)`</code></pre>
-<pre class="r"><code>merged_results_humanRS_mouseRS_omit_na &lt;- merged_results_humanRS_mouseRS %&gt;%
-  filter(!is.na(Genus) &amp; !grepl(&quot;^NA(\\.\\d+)?&quot;, Genus))
-
-ggplot(merged_results_humanRS_mouseRS_omit_na) +
+<pre class="r"><code>ggplot(merged_results_humanRS_mouseRS) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat=&quot;identity&quot;)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
   theme_bw() +
