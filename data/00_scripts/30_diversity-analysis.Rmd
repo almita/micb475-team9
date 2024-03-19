@@ -19,6 +19,7 @@ library(picante)
 library(ARTool)
 library(ggsignif)
 library(pairwiseAdonis)
+library(ggpubr)
 ```
 
 ```{r}
@@ -46,7 +47,7 @@ rownames(richness) <- rownames(starch@sam_data)
 ```
 
 ```{r}
-starch_rich <- merge(starch@sam_data, richness, by = 0) %>% rename(sample_id = Row.names)
+starch_rich <- merge(starch@sam_data, richness, by = 0) %>% dplyr::rename(sample_id = Row.names)
 ```
 
 WIP:
@@ -297,7 +298,8 @@ starch_rich %>%
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
-		legend.position = "none"
+		legend.position = "none",
+		axis.title.x = element_blank()
 	)
 
 ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_group.png", units = "px", width = w, height = h, create.dir = TRUE)
@@ -337,7 +339,8 @@ mousedf <- as.data.frame(sample_data(mouse))
 
 #### Merged
 ```{r}
-bc_dm <- distance(starch, method="bray")
+bc_dm <- phyloseq::distance(starch, method="bray")
+adonis2(bc_dm ~ group*gender, data = data.frame(starchdf))
 adonis2(bc_dm ~ trt*cohort*gender, data = data.frame(starchdf))
 ```
 There is a significant difference between treatments, cohorts, genders, at least two trt:gender pair, and at least two cohort:gender pair.
@@ -471,7 +474,8 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender_mouse.png", unit
 ### Jaccard
 #### Merged
 ```{r}
-jc_dm <- distance(starch, method = "jaccard", binary = TRUE)
+jc_dm <- phyloseq::distance(starch, method = "jaccard", binary = TRUE)
+adonis2(jc_dm ~ group*gender, data = data.frame(starchdf))
 adonis2(jc_dm ~ cohort*trt*gender, data = data.frame(starchdf))
 ```
 There is a significant difference in community composition between cohorts, genders, and at least 2 cohort:gender pairs. 
@@ -600,7 +604,8 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender_mouse.png", unit
 
 #### Merged
 ```{r}
-uu_dm <- distance(starch, method = "unifrac")
+uu_dm <- phyloseq::distance(starch, method = "unifrac")
+adonis2(uu_dm ~ group*gender, data = data.frame(starchdf))
 adonis2(uu_dm ~ cohort*trt*gender, data = data.frame(starchdf))
 ```
 There is a significant difference in community composition and phylogeny between cohorts, genders and at least 2 group:gender pairs.
@@ -720,9 +725,9 @@ there's an interesting clustering, but we'd need more metadata to see what is ca
 ### Weighted Unifrac
 #### Merged
 ```{r}
-wu_dm <- distance(starch, method = "wunifrac")
-adonis2(wu_dm ~ cohort*trt*gender, data = data.frame(starchdf), permutations = 9999)
+wu_dm <- phyloseq::distance(starch, method = "wunifrac")
 adonis2(wu_dm ~ group*gender, data = data.frame(starchdf), permutations = 9999)
+adonis2(wu_dm ~ cohort*trt*gender, data = data.frame(starchdf), permutations = 9999)
 ```
 Significant difference in community structure and phylogeny between cohorts, genders and at least 2 trt:gender pairs.  
 
