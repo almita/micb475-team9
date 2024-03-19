@@ -53,9 +53,13 @@ merged_results_human <- tax_table(human_filt) %>% as.data.frame() %>%
 ```
 
 ```{r}
-ggplot(merged_results_human) +
-  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
+merged_results_human_omit_na <- merged_results_human %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_human_omit_na) +
+  geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity", na.rm = TRUE)+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 
 ```
@@ -95,9 +99,13 @@ merged_results_humanC_mouseC <- tax_table(humanC_mouseC_filt) %>% as.data.frame(
 ```
 
 ```{r}
-ggplot(merged_results_humanC_mouseC) +
+merged_results_humanC_mouseC_omit_na <- merged_results_humanC_mouseC %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_humanC_mouseC_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 ```
 
@@ -136,9 +144,13 @@ merged_results_humanC_mouseRS <- tax_table(humanC_mouseRS_filt) %>% as.data.fram
 ```
 
 ```{r}
-ggplot(merged_results_humanC_mouseRS) +
+merged_results_humanC_mouseRS_omit_na <- merged_results_humanC_mouseRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_humanC_mouseRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 ```
 
@@ -177,9 +189,13 @@ merged_results_mouse <- tax_table(mouse_filt) %>% as.data.frame() %>%
 ```
 
 ```{r}
-ggplot(merged_results_mouse) +
+merged_results_mouse_omit_na <- merged_results_mouse %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_mouse_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 ```
 
@@ -217,9 +233,13 @@ merged_results_mouseC_humanRS <- tax_table(mouseC_humanRS_filt) %>% as.data.fram
 ```
 
 ```{r}
-ggplot(merged_results_mouseC_humanRS) +
+merged_results_mouseC_humanRS_omit_na <- merged_results_mouseC_humanRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_mouseC_humanRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 ```
 
@@ -257,8 +277,12 @@ merged_results_humanRS_mouseRS <- tax_table(humanRS_mouseRS_filt) %>% as.data.fr
 ```
 
 ```{r}
-ggplot(merged_results_humanRS_mouseRS) +
+merged_results_humanRS_mouseRS_omit_na <- merged_results_humanRS_mouseRS %>%
+  filter(!is.na(Genus) & !grepl("^NA(\\.\\d+)?", Genus))
+
+ggplot(merged_results_humanRS_mouseRS_omit_na) +
   geom_bar(aes(x=Genus, y=log2FoldChange), stat="identity")+
   geom_errorbar(aes(x=Genus, ymin=log2FoldChange-lfcSE, ymax=log2FoldChange+lfcSE)) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
 ```
