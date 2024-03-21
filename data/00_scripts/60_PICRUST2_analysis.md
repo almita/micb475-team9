@@ -53,5 +53,5 @@ biom convert \
   -o pathabun_exported/pathway_abundance.tsv \
   --to-tsv
 
-# Convert to Local Computer
+# Transfer to Local Computer
 scp -r root@10.19.139.174:~/data/20_qiime/q2-picrust2_output .
