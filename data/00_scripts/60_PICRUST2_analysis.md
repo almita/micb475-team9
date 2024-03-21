@@ -1,14 +1,14 @@
-# PICRUST QIIME SECTION
+## PICRUST QIIME SECTION
 
-## Filter the table.qza to remove all the features with 5 or lower counts. 
-## (Quality control) This will make the PICRUSt2 analysis much faster.
+### Filter the table.qza to remove all the features with 5 or lower counts. 
+### (Quality control) This will make the PICRUSt2 analysis much faster.
 
 qiime feature-table filter-features \
   --i-table merged_table-no-mitochondria-no-chloroplast-no-unassigned.qza \
   --p-min-frequency 5 \
   --o-filtered-table feature-frequency-filtered-table.qza
 
-## Running the picrust2 qiime2 plugin (takes 15-20 mins) do on detached screen
+### Running the picrust2 qiime2 plugin (takes 15-20 mins) do on detached screen
   
 qiime picrust2 full-pipeline \
   --i-table feature-frequency-filtered-table.qza \
@@ -21,7 +21,7 @@ qiime picrust2 full-pipeline \
   --input-path ec_metagenome.qza \
   --output-path ecmeta_exported
 
-## Create export files for R analysis downstream
+### Create export files for R analysis downstream
 
 qiime tools export \
   --input-path ec_metagenome.qza \
@@ -35,7 +35,7 @@ qiime tools export \
   --input-path pathway_abundance.qza \
   --output-path pathabun_exported
 
-## Convert feature table to tsv
+### Convert feature table to tsv
 biom convert \
   -i ecmeta_exported/feature-table.biom \
   -o ecmeta_exported/ecmeta.tsv \
@@ -51,5 +51,5 @@ biom convert \
   -o pathabun_exported/pathway_abundance.tsv \
   --to-tsv
 
-## Transfer to Local Computer
+### Transfer to Local Computer
 scp -r root@10.19.139.174:~/data/20_qiime/q2-picrust2_output .
