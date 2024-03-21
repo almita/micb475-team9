@@ -137,3 +137,14 @@
 - 	shows significance, which is good
 - redo metadata, qiime processing, and other analyses with the additional human samples for next week
 
+### Meeting 8 - 21/Mar/2024
+#### Notes
+- Chao 1 index - compare with original paper (trimming parameters)
+- alpha diversity - significance in human cohort in shannon_group between RS2 and control
+- beta diversity - no significance in human treatments, significance seen in mice cohort
+- PERMANOVA - significance seen in mice but not human - human cohort had control group being fed some resistant starch, just not as much, but for mice, the control group was not fed anything
+- core microbiome - no overlap found - donors of human gut microbiome for the mouse cohort study may have been from different from the human cohort - could go a bit higher than genus (maybe family) to see 
+  if there is increased overlap between the two groups
+- differential abundance - keep barplot for within mouse and within human groups and don't need a cutoff for either within groups - get rid of barplots for the between cohort analyses - also move up a 
+  classification level to family
+- perform functional analysis and clean up above analyses for next week
