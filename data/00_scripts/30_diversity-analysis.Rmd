@@ -60,7 +60,7 @@ data_evenness <- diversity(otu) / log(specnumber(otu))
 ```
 
 
-### Shannon
+### Shannon and Chao1
 #### Statistical Analysis
 ##### Merged
 ```{r}
@@ -83,12 +83,28 @@ shannon_kw
 ```
 Overall shows a significant difference in the Shannon index between genders.
 
-Trying to do a multivariate analysis but not working -> _F values of ANOVAs on aligned responses not of interest are not all ~0. ART may not be appropriate._
+```{r}
+chao1_kw <- kruskal.test(Chao1 ~ group, data = starch_rich)
+chao1_kw
+
+if (chao1_kw$p.value < 0.05){
+	pairwise.wilcox.test(starch_rich$Chao1, starch_rich$group, 
+                       p.adjust = "bonferroni")
+}
+```
+Difference in Chao1 index between: human-c & mouse-c and human-C & mouse-rs
+No difference between: human-RS and mouse-RS!!
 
 ```{r}
-(shan <- art(Shannon ~ factor(trt)*factor(cohort)*factor(gender) + (factor(trt)/factor(cohort)), data = starch_rich))
-anova(shan)
+chao1_kw <- kruskal.test(Chao1 ~ gender, data = starch_rich)
+chao1_kw
+
+if (chao1_kw$p.value < 0.05){
+	pairwise.wilcox.test(starch_rich$Chao1, starch_rich$gender, 
+                       p.adjust = "bonferroni")
+}
 ```
+No significant difference between genders. 
 
 ##### Mouse
 
@@ -102,6 +118,14 @@ No significant difference in Shannon index between treatments.
 ```{r}
 starch_rich %>% 
 	filter(cohort == "mouse") %>%
+	kruskal.test(Chao1 ~ trt, data = .)
+```
+No significant difference in Chao1 index between treatments.
+
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
 	kruskal.test(Shannon ~ gender, data = .)
 ```
 
@@ -110,17 +134,67 @@ Significant difference in Shannon index between genders.
 ```{r}
 starch_rich %>% 
 	filter(cohort == "mouse") %>%
+	kruskal.test(Chao1 ~ gender, data = .)
+```
+Significant difference in Chao1 index between genders.
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "mouse") %>%
 	kruskal.test(Shannon ~ starch_type, data = .)
 ```
-No significant difference in Shannon index between starch types (?)
+No significant difference in Shannon index between starch types
+
+```{r}
+mouse_kw <- starch_rich %>% 
+	filter(cohort == "mouse") %>%
+	kruskal.test(Chao1 ~ starch_type, data = .)
+```
+
+```{r}
+mouse_rich <- starch_rich %>% 
+	filter(cohort == "mouse")
+
+chao1_kw <- mouse_rich %>%
+	kruskal.test(Chao1 ~ starch_type, data = .)
+
+if (chao1_kw$p.value < 0.05){
+	pairwise.wilcox.test(mouse_rich$Chao1, mouse_rich$starch_type, 
+                       p.adjust = "bonferroni")
+}
+```
+
+Significant difference in mean Chao1 index between CKP and PTB. 
 
 ##### Human
+```{r}
+starch_rich %>% 
+	filter(cohort == "human") %>%
+	kruskal.test(Shannon ~ trt, data = .)
+```
+Significant difference in Shannon index between treatments 
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "human") %>%
+	kruskal.test(Chao1 ~ trt, data = .)
+```
+No significant difference in Chao1 index between treatments. 
+
 ```{r}
 starch_rich %>% 
 	filter(cohort == "human") %>%
 	kruskal.test(Shannon ~ gender, data = .)
 ```
 Significant difference in Shannon index between genders. 
+
+```{r}
+starch_rich %>% 
+	filter(cohort == "human") %>%
+	kruskal.test(Chao1 ~ gender, data = .)
+```
+No significant difference in Chao1 index between genders. 
+
 
 #### Plots
 
@@ -130,7 +204,9 @@ my_comparisons <- list(c("human-C", "human-RS"),
 											 c("mouse-RS","human-RS"),
 											 c("mouse-C","human-C"))
 starch_comparisons <- list(c("CTL", "CKP"),
-													 c("CKP", "LEN")
+													 c("CKP", "LEN"),
+													 c("CKP", "BEP"),
+													 c("CKP", "PTB")
 													 )
 ```
 
@@ -187,13 +263,60 @@ starch_rich %>%
 ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_facet.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
 
+```{r}
+starch_rich %>%
+	ggboxplot(x = "group", y = "Chao1", color =  "group",
+						palette = pal) +
+	stat_compare_means(comparisons = my_comparisons, label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_group.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
+						palette = pal3) +
+	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
+						palette = pal3, facet.by = "group") +
+	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none",
+		axis.title.x = element_blank()
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_gender_facet.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
+
 ##### Mouse
 ```{r}
 starch_rich %>%
 	filter(cohort == "mouse") %>%
-	ggboxplot(x = "gender", y = "Shannon", color =  "trt",
-						palette = pal[3:4]) +
-	stat_compare_means(label = "p.signif") +
+	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
+						palette = pal3) +
+	facet_wrap(.~trt) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -205,9 +328,28 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_mouse.png"
 
 starch_rich %>%
 	filter(cohort == "mouse") %>%
+	ggboxplot(x = "trt", y = "Shannon", color =  "trt",
+						palette = rev(pal[3:4])) +
+	facet_wrap(.~gender) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "mouse") %>%
 	ggboxplot(x = "starch_type", y = "Shannon", color =  "starch_type",
 						palette = pal2) +
-	stat_compare_means(comparisons = starch_comparisons, label = "p.signif") +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	xlab("Starch Type") +
 	theme_bw() +
 	theme(
@@ -218,15 +360,71 @@ starch_rich %>%
 
 ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
-Why does the plot show a significance value between starch types when the kruskal wallis test didn't.
+
+```{r}
+starch_rich %>%
+	filter(cohort == "mouse") %>%
+	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
+						palette = pal3) +
+	facet_wrap(.~trt) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_gender_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "mouse") %>%
+	ggboxplot(x = "trt", y = "Chao1", color =  "trt",
+						palette = rev(pal[3:4])) +
+	facet_wrap(.~gender) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_trt_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "mouse") %>%
+	ggboxplot(x = "starch_type", y = "Chao1", color =  "starch_type",
+						palette = pal2) +
+	stat_compare_means(comparisons = starch_comparisons,
+										 method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	xlab("Starch Type") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "none"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_type_mouse.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
 
 ##### Human
 ```{r}
 starch_rich %>%
 	filter(cohort == "human") %>%
-	ggboxplot(x = "gender", y = "Shannon", color =  "trt",
-						palette = pal) +
-	stat_compare_means(label = "p.signif") +
+	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
+						palette = pal3) +
+	facet_wrap(.~trt) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -235,7 +433,61 @@ starch_rich %>%
 	)
 
 ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "human") %>%
+	ggboxplot(x = "trt", y = "Shannon", color =  "trt",
+						palette = pal) +
+	facet_wrap(.~gender) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
+
+```{r}
+starch_rich %>%
+	filter(cohort == "human") %>%
+	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
+						palette = pal3) +
+	facet_wrap(.~trt) +
+	stat_compare_means(method = "kruskal.test",
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_gender_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+
+starch_rich %>%
+	filter(cohort == "human") %>%
+	ggboxplot(x = "trt", y = "Chao1", color =  "trt",
+						palette = pal) +
+	facet_wrap(.~gender) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
+	theme_bw() +
+	theme(
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank(),
+		legend.position = "right"
+	)
+
+ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_trt_human.png", units = "px", width = w, height = h, create.dir = TRUE)
+```
+
 
 ### Faith's Phylogenetic Diversity 
 ```{r}
@@ -328,6 +580,7 @@ starch_rich %>%
 
 ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_gender_facet.png", units = "px", width = w, height = h, create.dir = TRUE)
 ```
+
 ## Beta Diversity
 ```{r}
 starchdf <- as.data.frame(sample_data(starch))
