@@ -145,6 +145,20 @@
 - PERMANOVA - significance seen in mice but not human - human cohort had control group being fed some resistant starch, just not as much, but for mice, the control group was not fed anything
 - core microbiome - no overlap found - donors of human gut microbiome for the mouse cohort study may have been from different from the human cohort - could go a bit higher than genus (maybe family) to see 
   if there is increased overlap between the two groups
-- differential abundance - keep barplot for within mouse and within human groups and don't need a cutoff for either within groups - get rid of barplots for the between cohort analyses - also move up a 
-  classification level to family
+- differential abundance - keep barplot for within mouse and within human groups and don't need a cutoff for either within groups - get rid of barplots for the between cohort analyses - also move up a classification level to family
 - perform functional analysis and clean up above analyses for next week
+
+
+### Meeting 9 - 28/Mar/2024
+#### Notes
+- abundance is driving the difference in RS in alpha and beta diversity
+- core microbiome still at genus level and not changed to family
+- lots of significant pathways in PiCRUST analysis - groups are very different
+Story:
+- humanized mouse model is not good for studying starch resistance in this specific mice and human dataset
+- Figure 1: Alpha diversity all 3 panels - overall mention diversity were the same -
+- Digure 2: Beta Diversity - only Bray-Curtis
+- Figure 3: DESeq volcano plots only - human only, mouse only (shows within species effect), human control-mouse control, human RS (4 panels total) 
+- Figure 4: Core Microbiome - 4 way Venn Diagram - 2 panels (Genus and Family)
+- Figure 5 - PiCRUST Heat map - don't present (maybe just pcoA plot), but put in manuscript - show complete unique taxonomic groups and different metabolic pathways
+- emphasize in paper that the two papers are very different studies - humans used as donors in mice study may have been very different than human cohort used in human study
