@@ -45,10 +45,15 @@ res_humanRS_mouseRS <- results(starch_DESEQ, tidy=TRUE,
 
 ## Volcano plot: effect size VS significance
 
+pal = c("grey80", "#06ABDFFF")
+
 vol_plot_human <- res_human %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant)) +
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_human.png",vol_plot_human)
 
@@ -56,7 +61,10 @@ ggsave("vol_plot_human.png",vol_plot_human)
 vol_plot_humanC_mouseC <- res_humanC_mouseC %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_humanC_mouseC.png",vol_plot_humanC_mouseC)
 
@@ -64,7 +72,10 @@ ggsave("vol_plot_humanC_mouseC.png",vol_plot_humanC_mouseC)
 vol_plot_humanC_mouseR <- res_humanC_mouseRS %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_humanC_mouseR.png",vol_plot_humanC_mouseR)
 
@@ -72,7 +83,10 @@ ggsave("vol_plot_humanC_mouseR.png",vol_plot_humanC_mouseR)
 vol_plot_mouse <- res_mouse %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_mouse.png",vol_plot_mouse)
 
@@ -80,7 +94,10 @@ ggsave("vol_plot_mouse.png",vol_plot_mouse)
 vol_plot_mouseC_humanRS <- res_mouseC_humanRS %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_mouseC_humanRS.png",vol_plot_mouseC_humanRS)
 
@@ -88,7 +105,10 @@ ggsave("vol_plot_mouseC_humanRS.png",vol_plot_mouseC_humanRS)
 vol_plot_humanRS_mouseRS <- res_humanRS_mouseRS %>%
   mutate(significant = padj<0.01 & abs(log2FoldChange)>2) %>%
   ggplot() +
-  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))
+  geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
+	scale_color_manual(values = pal) +
+	theme_bw() +
+	theme(panel.grid = element_blank())
 
 ggsave("vol_plot_humanRS_mouseRS.png",vol_plot_humanRS_mouseRS)
 
