@@ -33,7 +33,7 @@ mouse <- subset_samples(starch, cohort == "mouse")
 ```
 
 ```{r}
-pal <- c("#DD4124FF", "#faa478", "#6ac1de", "#0269a1FF")
+pal <- c("#DD4124FF", "#faa478", "#0269a1", "#6ac1de")
 pal2 <- c("#00346EFF", "#007CBFFF", "#06ABDFFF", "#EDD03EFF", "#F5A200FF", "#6D8600FF", "#424D0CFF")
 pal3 <- c("#FDAE61FF", "#ABDDA4FF")
 ```
@@ -50,13 +50,12 @@ rownames(richness) <- rownames(starch@sam_data)
 starch_rich <- merge(starch@sam_data, richness, by = 0) %>% dplyr::rename(sample_id = Row.names)
 ```
 
-WIP:
+Reordering group factors so that they make sense
 ```{r}
-otu <- otu_table(starch) %>% as.matrix() 
-```
+starch_rich$group <- factor(starch_rich$group, 
+														levels = c("human-C", "human-RS", 
+																			 "mouse-C", "mouse-RS"))
 
-```{r}
-data_evenness <- diversity(otu) / log(specnumber(otu))
 ```
 
 
@@ -223,7 +222,10 @@ h <- 2000
 starch_rich %>%
 	ggboxplot(x = "group", y = "Shannon", color =  "group",
 						palette = pal) +
-	stat_compare_means(comparisons = my_comparisons, label = "p.signif") +
+	stat_compare_means(comparisons = my_comparisons,
+										 method = "wilcox.test",
+										 hide.ns = FALSE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -237,7 +239,9 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_group.png", units
 starch_rich %>%
 	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
 						palette = pal3) +
-	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -251,7 +255,9 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender.png", unit
 starch_rich %>%
 	ggboxplot(x = "gender", y = "Shannon", color =  "gender",
 						palette = pal3, facet.by = "group") +
-	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -267,7 +273,10 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/shannon_gender_facet.png"
 starch_rich %>%
 	ggboxplot(x = "group", y = "Chao1", color =  "group",
 						palette = pal) +
-	stat_compare_means(comparisons = my_comparisons, label = "p.signif") +
+	stat_compare_means(comparisons = my_comparisons,
+										 method = "wilcox.test", 
+										 hide.ns = FALSE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -281,7 +290,9 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_group.png", units =
 starch_rich %>%
 	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
 						palette = pal3) +
-	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -293,9 +304,11 @@ starch_rich %>%
 ggsave("../30_diversity-analysis/plots/alpha-diversity/chao1_gender.png", units = "px", width = w, height = h, create.dir = TRUE)
 
 starch_rich %>%
-	ggboxplot(x = "gender", y = "Chao1", color =  "gender",
+	ggboxplot(x = "gender", y = "Chao1", color = "gender",
 						palette = pal3, facet.by = "group") +
-	stat_compare_means(label = "p.signif", label.y = 4.2, label.x = 1.5) +
+	stat_compare_means(method = "kruskal.test", 
+										 hide.ns = TRUE,
+										 label = "p.signif") +
 	theme_bw() +
 	theme(
 		panel.grid.major = element_blank(),
@@ -347,7 +360,8 @@ starch_rich %>%
 	filter(cohort == "mouse") %>%
 	ggboxplot(x = "starch_type", y = "Shannon", color =  "starch_type",
 						palette = pal2) +
-	stat_compare_means(method = "kruskal.test",
+	stat_compare_means(comparisons = starch_comparisons,
+										 method = "kruskal.test",
 										 hide.ns = TRUE,
 										 label = "p.signif") +
 	xlab("Starch Type") +
@@ -588,6 +602,16 @@ humandf <- as.data.frame(sample_data(human))
 mousedf <- as.data.frame(sample_data(mouse))
 ```
 
+Reordering group levels
+
+
+```{r}
+starchdf$group <- factor(starchdf$group, 
+														levels = c("human-C", "human-RS", 
+																			 "mouse-C", "mouse-RS"))
+```
+
+
 ### Bray Curtis
 
 #### Merged
@@ -625,7 +649,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender.png", units = "p
 ```
 #### Human
 ```{r}
-human_bc_dm <- distance(human, method="bray")
+human_bc_dm <- phyloseq::distance(human, method="bray")
 adonis2(human_bc_dm ~ trt*gender, data = data.frame(humandf))
 ```
 There is only a significant difference in community structure between genders. I should probably consider here the effect of `trtseq` (fixed effect) or individuals as random error....
@@ -670,7 +694,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/bc_gender_facet_human.png"
 
 #### Mouse
 ```{r}
-mouse_bc_dm <- distance(mouse, method="bray")
+mouse_bc_dm <- phyloseq::distance(mouse, method="bray")
 adonis2(mouse_bc_dm ~ trt*starch_type*gender, data = data.frame(mousedf))
 pw <- pairwiseAdonis::pairwise.adonis2(mouse_bc_dm ~ trt*starch_type*gender, 
 																			 data = data.frame(mousedf))
@@ -764,7 +788,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender.png", units = "p
 
 #### Human
 ```{r}
-human_jc_dm <- distance(human, method = "jaccard", binary = TRUE)
+human_jc_dm <-phyloseq::distance(human, method = "jaccard", binary = TRUE)
 adonis2(human_jc_dm ~ trt*gender, data = data.frame(humandf))
 ```
 Community composition is not significantly different between treatments or gender.
@@ -799,7 +823,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/jc_gender_human.png", unit
 
 #### Mouse
 ```{r}
-mouse_jc_dm <- distance(mouse, method = "jaccard", binary = TRUE)
+mouse_jc_dm <-phyloseq::distance(mouse, method = "jaccard", binary = TRUE)
 adonis2(mouse_jc_dm ~ gender*trt*starch_type, data = data.frame(mousedf))
 pw <- pairwiseAdonis::pairwise.adonis2(mouse_jc_dm ~ starch_type, data = data.frame(mousedf))
 
@@ -894,7 +918,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/uu_gender.png", units = "p
 
 #### Human
 ```{r}
-human_uu_dm <- distance(human, method = "unifrac")
+human_uu_dm <-phyloseq::distance(human, method = "unifrac")
 adonis2(human_uu_dm ~ trt*gender, data = data.frame(humandf), permutations = 9999)
 ```
 There is a significant difference in community composition and phylogeny between genders. 
@@ -929,7 +953,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/uu_gender_human.png", unit
 
 #### Mouse
 ```{r}
-mouse_uu_dm <- distance(mouse, method = "unifrac")
+mouse_uu_dm <-phyloseq::distance(mouse, method = "unifrac")
 adonis2(mouse_uu_dm ~ trt*gender*starch_type, data = data.frame(mousedf))
 ```
 There no significant difference in community composition and phylogeny between treatments but there is a difference between genders and at least 2 gender:starch_type pairs. 
@@ -1015,7 +1039,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/wu_gender.png", units = "p
 
 #### Human
 ```{r}
-human_wu_dm <- distance(human, method = "wunifrac")
+human_wu_dm <-phyloseq::distance(human, method = "wunifrac")
 adonis2(human_wu_dm ~ trt*gender, data = data.frame(humandf), permutations = 9999)
 ```
 There is no significant difference in community structure and phylogeny between treatments, genders or the interaction between them. 
@@ -1050,7 +1074,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/wu_gender_human.png", unit
 
 #### Mouse
 ```{r}
-mouse_wu_dm <- distance(mouse, method = "wunifrac")
+mouse_wu_dm <-phyloseq::distance(mouse, method = "wunifrac")
 adonis2(mouse_wu_dm ~ trt*gender*starch_type, data = data.frame(mousedf))
 pw <- pairwiseAdonis::pairwise.adonis2(mouse_wu_dm ~ starch_type, data = data.frame(mousedf))
 
