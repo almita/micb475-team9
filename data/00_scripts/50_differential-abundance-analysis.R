@@ -53,7 +53,8 @@ vol_plot_human <- res_human %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant)) +
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_human.png",vol_plot_human)
 
@@ -64,7 +65,8 @@ vol_plot_humanC_mouseC <- res_humanC_mouseC %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_humanC_mouseC.png",vol_plot_humanC_mouseC)
 
@@ -75,7 +77,8 @@ vol_plot_humanC_mouseR <- res_humanC_mouseRS %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_humanC_mouseR.png",vol_plot_humanC_mouseR)
 
@@ -86,7 +89,8 @@ vol_plot_mouse <- res_mouse %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_mouse.png",vol_plot_mouse)
 
@@ -97,7 +101,8 @@ vol_plot_mouseC_humanRS <- res_mouseC_humanRS %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_mouseC_humanRS.png",vol_plot_mouseC_humanRS)
 
@@ -108,7 +113,8 @@ vol_plot_humanRS_mouseRS <- res_humanRS_mouseRS %>%
   geom_point(aes(x=log2FoldChange, y=-log10(padj), col=significant))+
 	scale_color_manual(values = pal) +
 	theme_bw() +
-	theme(panel.grid = element_blank())
+	theme(panel.grid = element_blank(),
+				legend.position = "none")
 
 ggsave("vol_plot_humanRS_mouseRS.png",vol_plot_humanRS_mouseRS)
 
