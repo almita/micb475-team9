@@ -213,8 +213,9 @@ starch_comparisons <- list(c("CTL", "CKP"),
 ##### Merged
 
 ```{r}
-w <- 2400
-h <- 2000
+w <- 1800
+h <- 1500
+font_size <- 18
 ```
 
 
@@ -226,7 +227,7 @@ starch_rich %>%
 										 method = "wilcox.test",
 										 hide.ns = FALSE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -242,7 +243,7 @@ starch_rich %>%
 	stat_compare_means(method = "kruskal.test", 
 										 hide.ns = TRUE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -258,7 +259,7 @@ starch_rich %>%
 	stat_compare_means(method = "kruskal.test", 
 										 hide.ns = TRUE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -277,7 +278,7 @@ starch_rich %>%
 										 method = "wilcox.test", 
 										 hide.ns = FALSE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -293,7 +294,7 @@ starch_rich %>%
 	stat_compare_means(method = "kruskal.test", 
 										 hide.ns = TRUE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -309,7 +310,7 @@ starch_rich %>%
 	stat_compare_means(method = "kruskal.test", 
 										 hide.ns = TRUE,
 										 label = "p.signif") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -560,7 +561,8 @@ No difference between genders.
 starch_rich %>%
 	ggboxplot(x = "group", y = "PD", color =  "group",
 						palette = pal) +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
+	ylab("Faith's phylogenetic diversity") +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -573,7 +575,8 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_group.png", units = "p
 starch_rich %>%
 	ggboxplot(x = "gender", y = "PD", color =  "gender",
 						palette = pal3) +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
+	ylab("Faith's phylogenetic diversity") +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -585,7 +588,8 @@ ggsave("../30_diversity-analysis/plots/alpha-diversity/pd_gender.png", units = "
 starch_rich %>%
 	ggboxplot(x = "gender", y = "PD", color =  "gender",
 						palette = pal3, facet.by = "group") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
+	ylab("Faith's phylogenetic diversity") +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -611,6 +615,10 @@ starchdf$group <- factor(starchdf$group,
 																			 "mouse-C", "mouse-RS"))
 ```
 
+```{r}
+font_size <- 14
+```
+
 
 ### Bray Curtis
 
@@ -628,7 +636,7 @@ pcoa_bc <- ordinate(starch, method="PCoA", distance=bc_dm)
 plot_ordination(starch, pcoa_bc, color = "group") +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -639,7 +647,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/bc_group.png", units = "px
 plot_ordination(starch, pcoa_bc, color = "gender") +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -660,7 +668,7 @@ human_pcoa_bc <- ordinate(human, method="PCoA", distance=human_bc_dm)
 plot_ordination(human, human_pcoa_bc, color = "trt") +
 	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -671,7 +679,7 @@ ggsave("../30_diversity-analysis/plots/beta-diversity/bc_trt_human.png", units =
 plot_ordination(human, human_pcoa_bc, color = "gender") +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -683,7 +691,7 @@ plot_ordination(human, human_pcoa_bc, color = "gender") +
 	scale_color_manual(values = pal3) +
 	facet_grid(.~trt) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -716,7 +724,7 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -728,7 +736,7 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "starch_type") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -740,7 +748,7 @@ plot_ordination(mouse, mouse_pcoa_bc, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Starch Type") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -764,7 +772,7 @@ plot_ordination(starch, pcoa_jc, color = "group") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -776,7 +784,7 @@ plot_ordination(starch, pcoa_jc, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -800,7 +808,7 @@ plot_ordination(human, human_pcoa_jc, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -812,7 +820,7 @@ plot_ordination(human, human_pcoa_jc, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -844,7 +852,7 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -856,7 +864,7 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "starch_type") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -868,7 +876,7 @@ plot_ordination(mouse, mouse_pcoa_jc, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -894,7 +902,7 @@ plot_ordination(starch, pcoa_uu, color = "group") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -906,7 +914,7 @@ plot_ordination(starch, pcoa_uu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -930,7 +938,7 @@ plot_ordination(human, human_pcoa_uu, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -942,7 +950,7 @@ plot_ordination(human, human_pcoa_uu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -965,7 +973,7 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -977,7 +985,7 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "starch_type") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -989,7 +997,7 @@ plot_ordination(mouse, mouse_pcoa_uu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1015,7 +1023,7 @@ plot_ordination(starch, pcoa_wu, color = "group") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal) +
   labs(col = "Group") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1027,7 +1035,7 @@ plot_ordination(starch, pcoa_wu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1051,7 +1059,7 @@ plot_ordination(human, human_pcoa_wu, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[1:2]) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1063,7 +1071,7 @@ plot_ordination(human, human_pcoa_wu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1095,7 +1103,7 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "trt") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal[3:4]) +
   labs(col = "Treatment") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1107,7 +1115,7 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "starch_type") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal2) +
   labs(col = "Starch Type") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
@@ -1119,7 +1127,7 @@ plot_ordination(mouse, mouse_pcoa_wu, color = "gender") +
 	#stat_ellipse(alpha = 0.5) +
 	scale_color_manual(values = pal3) +
   labs(col = "Gender") +
-	theme_bw() +
+	theme_bw(base_size = font_size) +
 	theme(
 		panel.grid.major = element_blank(),
 		panel.grid.minor = element_blank(),
