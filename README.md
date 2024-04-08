@@ -162,3 +162,17 @@ Story:
 - Figure 4: Core Microbiome - 4 way Venn Diagram - 2 panels (Genus and Family)
 - Figure 5 - PiCRUST Heat map - don't present (maybe just pcoA plot), but put in manuscript - show complete unique taxonomic groups and different metabolic pathways
 - emphasize in paper that the two papers are very different studies - humans used as donors in mice study may have been very different than human cohort used in human study
+
+### Meeting 10 - 04/04/2024
+#### Notes
+- Presenting slides:
+- Title: has to be a conclusion: Mouse model was not an adequate comparison/model for human dataset
+- show animations on text heavy sides
+- show actual dataset rather than findings of the studies - mentioned humanized mice and how humanized mice are done
+- experimental aims - only talk about 3-6
+- alpha diversity - title of results slide should be overall finding - make fonts for graphs bigger - can get rid of text and put on presenter's notes - only keep Shannon's and Faith's
+- differential abundance - title: resistant starch does affect abundace, but more profound in mouse - label graphs with the comparison rather than having it in text on the side
+- Core microbiome title: Few Shared taxa between the mouse and human cohorts - remove text and blow up Venn diagrams - keep Genus diagram only, not family
+- Conclusion: go through each analysis and mention what the main finding was
+- Future Directions: good
+- Narrative - we initially thought they would be similiar, we did these tests to take a look, we ended up seeing drastic differences
