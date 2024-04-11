@@ -625,6 +625,7 @@ font_size <- 14
 #### Merged
 ```{r}
 bc_dm <- phyloseq::distance(starch, method="bray")
+adonis2(bc_dm ~ group, data = data.frame(starchdf))
 adonis2(bc_dm ~ group*gender, data = data.frame(starchdf))
 adonis2(bc_dm ~ trt*cohort*gender, data = data.frame(starchdf))
 ```
