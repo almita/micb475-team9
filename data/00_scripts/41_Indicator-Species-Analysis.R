@@ -82,6 +82,11 @@ groupdf$relative_abundance <- ifelse(groupdf$relative_abundance==0,NA,groupdf$re
 groupdf %>% 
 	ggplot(aes(x=as.character(Row.names), y=Genus, size=relative_abundance))+
 	geom_point()+
+	scale_x_discrete(expand = expansion(add = 2)) +
+	scale_size(range = c(0.5,5),
+						 breaks = c(0.01, 0.1, 0.4, 0.7)) +
+	facet_grid(Family~group, space="free", scales="free")+ 
+	labs(x="Samples", y = "Genus", size="relative abundance") +
 	theme_bw() +
 	theme(panel.grid = element_blank(),
 				axis.text.y = element_text(size = 8, colour = "black", face="bold"), 
@@ -90,11 +95,10 @@ groupdf %>%
 				strip.background =element_rect(fill="grey95"),
 				strip.text = element_text(color="black", size=12), 
 				legend.text=element_text(size=12),
-				strip.text.y = element_text(angle = 0, size=8))+ 
-	facet_grid(Family~group, space="free", scales="free")+ 
-	labs(x="Samples", y = "Genus", size="relative abundance")
+				strip.text.y = element_text(angle = 0, size=8))
 
-ggsave("../40_core-microbiome/indval.png", units = "px", width = 3270, height = 1418)
+
+ggsave("../40_core-microbiome/indval.png", units = "px", width = 3270, height = 1418, dpi = 320)
 
 # family ------------------------------------------------------------------
 
