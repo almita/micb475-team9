@@ -64,6 +64,8 @@ starch_res_genus <- starch_isa_output_genus$sign %>%
 genus_filtered <- starch_res_genus %>%
 	filter(stat >= 0.8) 
 
+write.csv(genus_filtered, "../40_core-microbiome/indval0.8.csv")
+
 genusdf <- dephyloseq(starch_genus)
 
 ## keep only relevant data
@@ -75,8 +77,6 @@ groupdf$relative_abundance <- as.numeric(groupdf$asv_abundance)/as.numeric(group
 groupdf$presabs <- if_else(groupdf$relative_abundance == 0, "asb.", "pres.")
 ## use this to make the 0s white later
 groupdf$relative_abundance <- ifelse(groupdf$relative_abundance==0,NA,groupdf$relative_abundance)
-
-
 
 ## make the bubble plot
 groupdf %>% 
@@ -116,4 +116,5 @@ starch_res_family <- starch_isa_output_family$sign %>%
 	filter(p.value<0.05)
 
 #View results
-view(starch_res_family)
+family_0.8 <- starch_res_family %>%
+	filter(stat >= 0.8)
