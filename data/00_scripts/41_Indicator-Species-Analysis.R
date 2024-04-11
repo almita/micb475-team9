@@ -61,15 +61,18 @@ starch_res_genus <- starch_isa_output_genus$sign %>%
   filter(p.value<0.05)
 
 #View results
-genus_filtered <- starch_res_genus %>%
+genus_0.8 <- starch_res_genus %>%
 	filter(stat >= 0.8) 
 
-write.csv(genus_filtered, "../40_core-microbiome/indval0.8.csv")
+write.csv(genus_0.8, "../40_core-microbiome/indval_genus_0.8.csv")
+
+
+# genus bubbleplot --------------------------------------------------------
 
 genusdf <- dephyloseq(starch_genus)
 
 ## keep only relevant data
-groupdf <- inner_join(genusdf, genus_filtered)
+groupdf <- inner_join(genusdf, genus_0.8)
 
 ## calcuate the relative abundance of each ASV in each sample
 groupdf$relative_abundance <- as.numeric(groupdf$asv_abundance)/as.numeric(groupdf$sample_sums)
@@ -122,3 +125,17 @@ starch_res_family <- starch_isa_output_family$sign %>%
 #View results
 family_0.8 <- starch_res_family %>%
 	filter(stat >= 0.8)
+
+write.csv(family_0.8, "../40_core-microbiome/indval_family_0.8.csv")
+
+
+# core and indicator species comparison -----------------------------------
+
+genus <- genus_0.8 %>% select(-c(Domain, Phylum, Class, Order, Species)) %>% 
+	inner_join(rename(core_genus, ASV = key))
+
+family <- family_0.8 %>% select(-c(Domain, Phylum, Class, Order, Genus, Species)) %>% 
+	inner_join(rename(core_family, ASV = key))
+
+write.csv(genus, "../40_core-microbiome/core_indval_genus.csv")
+write.csv(family, "../40_core-microbiome/core_indval_family.csv")

@@ -1,0 +1,11 @@
+"","ASV","s.human-C","s.human-RS","s.mouse-C","s.mouse-RS","index","stat","p.value","Domain","Phylum","Class","Order","Family","Genus","Species"
+"1","0f57ea7da60037232eadd51a4fc0cbf4",0,0,1,1,10,0.866759509364405,0.005,"Bacteria","Verrucomicrobiota","Verrucomicrobiae","Verrucomicrobiales","Akkermansiaceae",NA,NA
+"2","bf41c50b5e2bcae3a0d0ffcc45d4902d",0,0,1,1,10,0.844975031250949,0.005,"Bacteria","Desulfobacterota","Desulfovibrionia","Desulfovibrionales","Desulfovibrionaceae",NA,NA
+"3","f8da0ced5b688fda1c183aa7c2d4ded3",0,0,1,1,10,0.885767059987137,0.005,"Bacteria","Actinobacteriota","Coriobacteriia","Coriobacteriales","Eggerthellaceae",NA,NA
+"4","d976bbe6c2b1e7ac5e0603396cf59075",0,0,1,1,10,0.956897526862782,0.005,"Bacteria","Firmicutes","Bacilli","Lactobacillales","Lactobacillaceae",NA,NA
+"5","9480753dc86a1a1f99d32d989d688055",0,0,1,1,10,0.940053444436486,0.005,"Bacteria","Firmicutes","Bacilli","Lactobacillales","Streptococcaceae",NA,NA
+"6","72dc1adab07467a53976a4f507a53978",0,0,1,1,10,0.999660462353102,0.005,"Bacteria","Firmicutes","Bacilli","Lactobacillales","Enterococcaceae",NA,NA
+"7","f35caa5d7360c6077c0fe12e91913c76",0,0,1,1,10,0.997027577363078,0.005,"Bacteria","Firmicutes","Bacilli","Erysipelotrichales","Erysipelotrichaceae",NA,NA
+"8","40df41f013abab8d31cec795ff34044e",1,1,1,0,11,0.881065043359568,0.005,"Bacteria","Actinobacteriota","Actinobacteria","Bifidobacteriales","Bifidobacteriaceae",NA,NA
+"9","788731bdc4fca02c701d7bc242c6cefe",1,1,0,0,5,0.812647043935103,0.005,"Bacteria","Firmicutes","Clostridia","Oscillospirales","[Eubacterium]_coprostanoligenes_group",NA,NA
+"10","7eccce4ad608f154e5d5a9a930de899c",1,1,0,0,5,0.894953494005424,0.005,"Bacteria","Firmicutes","Clostridia","Monoglobales","Monoglobaceae",NA,NA
