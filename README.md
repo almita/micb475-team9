@@ -163,7 +163,7 @@ Story:
 - Figure 5 - PiCRUST Heat map - don't present (maybe just pcoA plot), but put in manuscript - show complete unique taxonomic groups and different metabolic pathways
 - emphasize in paper that the two papers are very different studies - humans used as donors in mice study may have been very different than human cohort used in human study
 
-### Meeting 10 - 04/04/2024
+### Meeting 10 - 04/Apr/2024
 #### Notes
 - Presenting slides:
 - Title: has to be a conclusion: Mouse model was not an adequate comparison/model for human dataset
@@ -176,3 +176,11 @@ Story:
 - Conclusion: go through each analysis and mention what the main finding was
 - Future Directions: good
 - Narrative - we initially thought they would be similiar, we did these tests to take a look, we ended up seeing drastic differences
+
+
+### Meeting 11 - 12/Apr/2024
+#### Notes
+- don't worry about figure sizing becuase Evelyn will reformat that
+- move Figure 5 into supplemental
+- discuss in the Manuscript how we would infer RS2 for the mouse dataset
+- change manuscript to RS and then mention RS2 in the limitations
