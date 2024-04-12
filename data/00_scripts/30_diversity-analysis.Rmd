@@ -16,8 +16,6 @@ library(phyloseq)
 library(ape)
 library(tidyverse)
 library(picante)
-library(ARTool)
-library(ggsignif)
 library(pairwiseAdonis)
 library(ggpubr)
 ```
